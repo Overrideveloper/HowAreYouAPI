@@ -23,6 +23,7 @@ def addQuestion(req: Dict):
     
     questions.append(question)
     db.set(QUESTIONS_KEY, questions)
+
     return question
 
 def deleteQuestion(id: int):
@@ -35,8 +36,10 @@ def deleteQuestion(id: int):
     else:
         if question_index is not None: 
             question = questions[question_index]
+
             del questions[question_index]
             db.set(QUESTIONS_KEY, questions)
+
             return question
         else:
             return None

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
 class Answer(BaseModel):
-    question: str
+    id: int
     answer: str
+    question_id: int

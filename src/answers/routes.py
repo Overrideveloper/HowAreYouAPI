@@ -1,46 +1,56 @@
-from fastapi import APIRouter, HTTPException
-from typing import List, Any
-from src.answers.models import Answer
+from fastapi import APIRouter, Response as HttpResponse
 from src.response_models import Response
-from src.constants import QUESTIONS as questions
+from src.answers.request_models import AddEditAnswer as Answer
+import src.answers.provider as provider
 
 answers = APIRouter()
 
-
-
-_answers: List[Answer] = []
-
-@answers.get('/', response_model=Response, status_code = 200)
+@answers.get('/', response_model = Response, status_code = 200)
 def getAnswers():
-    return { "data": _answers, "code": 200, "message": "Answers returned" }
+    data = provider.getAnswers()
+    return { "data": data, "code": 200, "message": "{0} Answer(s) returned".format(len(data)) }
 
-@answers.get('/', response_model=Response, status_code = 200)
-def getAnswers():
-    return { "data": _answers, "code": 200, "message": "Answers returned" }
-
-@answers.post('/', response_model=Response, status_code = 201)
-async def addAnswers(_payload: Answer):
-    payload = dict(_payload)
-
-    if payload["question"] in questions:
-        question_index: int = questions.index(payload["question"])
-        
-        if payload["answer"]:
-            answer_index: int = None
-            
-            for i in range(len(_answers)):
-                if _answers[i]["question"] == payload["question"]:
-                    answer_index = i
-            else:
-                if answer_index is not None:
-                    del _answers[i]
-                    _answers.insert(i, payload)
-                else:
-                    _answers.append(payload)
-
-            return { "data": payload, "code": 201, "message": "Answer saved" }
-        else:
-            raise HTTPException(status_code = 400, detail = "Answer cannot be empty")
+@answers.get('/{id}', response_model = Response, status_code = 200)
+def getAnswer(id: int, response: HttpResponse):
+    data = provider.getAnswer(id)
+    
+    if data is not None:
+        return { "data": data, "code": 200, "message": "Answer returned" }
     else:
-        raise HTTPException(status_code = 400, detail = "'{question}' is not a valid question".format(question = payload["question"]))
-        
+        response.status_code = 404
+
+        return { "data": None, "code": 404, "message": "Answer not found" }
+
+@answers.post('/', response_model = Response, status_code = 201)
+def addAnswer(payload: Answer, response: HttpResponse):
+    data = provider.addAnswer(dict(payload))
+    
+    if data["code"] == 200:
+        return { "data": data["data"], "code": 200, "message": "Answer saved" }
+    else:
+        response.status_code = data["code"]
+
+        return { "data": None, "code": data["code"], "message": data["message"] }
+
+@answers.delete('/{id}', response_model = Response, status_code = 200)
+def deleteAnswer(id: int, response: HttpResponse):
+    data = provider.deleteAnswer(id)
+    
+    if data is not None:
+        return { "data": None, "code": 200, "message": "Answer deleted" }
+    else:
+        response.status_code = 404
+
+        return { "data": None, "code": 404, "message": "Answer not found" }
+    
+@answers.put('/{id}', response_model = Response, status_code = 200)
+def editAnswer(id: int, payload: Answer, response: HttpResponse):
+    data = provider.editAnswer(id, dict(payload))
+    
+    if data["code"] == 200:
+        return { "data": data["data"], "code": 200, "message": "Answer edited" }
+    else:
+        response.status_code = data["code"]
+
+        return { "data": None, "code": data["code"], "message": data["message"] }
+    
