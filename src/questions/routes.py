@@ -25,7 +25,7 @@ def getQuestion(id: int, response: HttpResponse):
 
 @questions.post('/', response_model = Response, status_code = 201)
 def addQuestion(payload: Question):
-    data = provider.addQuestion(dict(payload)["question"])
+    data = provider.addQuestion(dict(payload))
     
     return { "data": data, "code": 201, "message": "Question saved"}
 
@@ -43,7 +43,7 @@ def deleteQuestion(id: int, response: HttpResponse):
 
 @questions.put('/{id}', response_model = Response, status_code = 200)
 def editQuestion(id: int, payload: Question, response: HttpResponse):
-    data = provider.editQuestion(id, dict(payload)["question"])
+    data = provider.editQuestion(id, dict(payload))
     
     if data is not None:
         res = { "data": data, "code": 200, "message": "Question edited" }

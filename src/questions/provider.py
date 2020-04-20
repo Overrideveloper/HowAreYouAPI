@@ -1,6 +1,6 @@
 from src.questions.models import Question
 from src.constants import QUESTIONS_KEY
-from typing import List
+from typing import List, Dict
 from src.utils import randomInt
 import src.db as db
     
@@ -17,11 +17,11 @@ def getQuestion(id: int):
     else:
         return question
     
-def addQuestion(_question: str):
+def addQuestion(req: Dict):
     questions: List[Question] = db.get(QUESTIONS_KEY) or []
-    question = Question(question = _question, id = randomInt())
+    question = dict(Question(question = req["question"], defaultAnswer = req["defaultAnswer"], id = randomInt()))
     
-    questions.append(dict(question))
+    questions.append(question)
     db.set(QUESTIONS_KEY, questions)
     return question
 
@@ -41,7 +41,7 @@ def deleteQuestion(id: int):
         else:
             return None
             
-def editQuestion(id: int, _question: str):
+def editQuestion(id: int, req: Dict):
     questions: List[Question] = db.get(QUESTIONS_KEY) or []
     question_index = None
     
@@ -51,7 +51,8 @@ def editQuestion(id: int, _question: str):
     else:
         if question_index is not None:
             question = questions[question_index]
-            question["question"] = _question
+            question["question"] = req["question"]
+            question["defaultAnswer"] = req["defaultAnswer"]
             
             del questions[question_index]
 
