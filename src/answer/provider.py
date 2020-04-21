@@ -6,7 +6,7 @@ from typing import List
 import src.db as db
 
 def getAnswers():
-    data = db.get(ANSWERS_KEY) or []
+    data: List[Answer] = db.get(ANSWERS_KEY) or []
     return { "data": data, "code": 200, "message": "{0} Answer(s) returned".format(len(data)) }
 
 def getAnswer(id: int):
@@ -17,7 +17,7 @@ def getAnswer(id: int):
         if a["id"] == id:
             answer = a
     else:
-        if answer is not None:
+        if answer:
             return { "data": answer, "code": 200, "message": "Answer returned" }
         else:
             return { "data": None, "code": 404, "message": "Answer not found" }
@@ -30,7 +30,7 @@ def addAnswer(req: dict):
         if q["id"] == req["question_id"]:
             question = q
     else:
-        if question is not None:
+        if question:
             answers: List[Answer] = db.get(ANSWERS_KEY) or []
             question_already_answered: bool = False
             
@@ -38,7 +38,7 @@ def addAnswer(req: dict):
                 if a["question_id"] == question["id"]:
                     question_already_answered = True
             else:
-                if question_already_answered is False:
+                if not question_already_answered:
                     answer = dict(Answer(answer = req["answer"], question_id = question["id"], id = randomInt()))
                     
                     answers.append(answer)
@@ -58,7 +58,7 @@ def deleteAnswer(id: int):
         if answers[i]["id"] == id:
             answer_index = i
     else:
-        if answer_index is not None:
+        if answer_index:
             del answers[answer_index]
             db.set(ANSWERS_KEY, answers)
 
@@ -74,7 +74,7 @@ def editAnswer(id: int, req: dict):
         if q["id"] == req["question_id"]:
             question = q
     else:
-        if question is not None:
+        if question:
             answers: List[Answer] = db.get(ANSWERS_KEY) or []
             answer_index = None
             
@@ -82,7 +82,7 @@ def editAnswer(id: int, req: dict):
                 if answers[i]["id"] == id:
                     answer_index = i
             else:
-                if answer_index is not None:
+                if answer_index:
                     answer = answers[answer_index]
                     answer["question_id"] = question["id"]
                     answer["answer"] = req["answer"]

@@ -5,7 +5,7 @@ from src.utils import randomInt
 import src.db as db
     
 def getQuestions():
-    data = db.get(QUESTIONS_KEY) or []
+    data: List[Question] = db.get(QUESTIONS_KEY) or []
     return { "data": data, "code": 200, "message": "{0} Question(s) returned".format(len(data)) }
 
 def getQuestion(id: int):
@@ -16,7 +16,7 @@ def getQuestion(id: int):
         if q["id"] == id:
             question = q
     else:
-        if question is not None:
+        if question:
             return { "data": question, "code": 200, "message": "Question returned" }
         else:
             return { "data": None, "code": 404, "message": "Question not found" }
@@ -38,14 +38,14 @@ def deleteQuestion(id: int):
         if questions[i]["id"] == id:
             question_index = i
     else:
-        if question_index is not None: 
+        if question_index: 
             del questions[question_index]
             db.set(QUESTIONS_KEY, questions)
 
             return { "data": None, "code": 200, "message": "Question deleted" }
         else:
             return { "data": None, "code": 404, "message": "Question not found" }
-            
+
 def editQuestion(id: int, req: dict):
     questions: List[Question] = db.get(QUESTIONS_KEY) or []
     question_index = None
@@ -54,7 +54,7 @@ def editQuestion(id: int, req: dict):
         if questions[i]["id"] == id:
             question_index = i
     else:
-        if question_index is not None:
+        if question_index:
             question = questions[question_index]
             question["question"] = req["question"]
             question["defaultAnswer"] = req["defaultAnswer"]
