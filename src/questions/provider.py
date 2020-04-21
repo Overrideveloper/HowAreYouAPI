@@ -1,11 +1,12 @@
 from src.questions.models import Question
 from src.constants import QUESTIONS_KEY
-from typing import List, Dict
+from typing import List
 from src.utils import randomInt
 import src.db as db
     
 def getQuestions():
-    return db.get(QUESTIONS_KEY) or []
+    data = db.get(QUESTIONS_KEY) or []
+    return { "data": data, "code": 200, "message": "{0} Question(s) returned".format(len(data)) }
 
 def getQuestion(id: int):
     questions: List[Question] = db.get(QUESTIONS_KEY) or []
@@ -15,16 +16,19 @@ def getQuestion(id: int):
         if q["id"] == id:
             question = q
     else:
-        return question
+        if question is not None:
+            return { "data": question, "code": 200, "message": "Question returned" }
+        else:
+            return { "data": None, "code": 404, "message": "Question not found" }
     
-def addQuestion(req: Dict):
+def addQuestion(req: dict):
     questions: List[Question] = db.get(QUESTIONS_KEY) or []
     question = dict(Question(question = req["question"], defaultAnswer = req["defaultAnswer"], id = randomInt()))
     
     questions.append(question)
     db.set(QUESTIONS_KEY, questions)
 
-    return question
+    return { "data": question, "code": 200, "message": "Question saved" }
 
 def deleteQuestion(id: int):
     questions: List[Question] = db.get(QUESTIONS_KEY) or []
@@ -35,16 +39,14 @@ def deleteQuestion(id: int):
             question_index = i
     else:
         if question_index is not None: 
-            question = questions[question_index]
-
             del questions[question_index]
             db.set(QUESTIONS_KEY, questions)
 
-            return question
+            return { "data": None, "code": 200, "message": "Question deleted" }
         else:
-            return None
+            return { "data": None, "code": 404, "message": "Question not found" }
             
-def editQuestion(id: int, req: Dict):
+def editQuestion(id: int, req: dict):
     questions: List[Question] = db.get(QUESTIONS_KEY) or []
     question_index = None
     
@@ -61,7 +63,7 @@ def editQuestion(id: int, req: Dict):
 
             questions.insert(question_index, question)
             db.set(QUESTIONS_KEY, questions)
-            
-            return question
+                    
+            return { "data": question, "code": 200, "message": "Question modified" }
         else:
-            return None
+            return { "data": None, "code": 404, "message": "Question not found" }

@@ -2,12 +2,12 @@ from src.answers.models import Answer
 from src.questions.models import Question
 from src.constants import ANSWERS_KEY, QUESTIONS_KEY
 from src.utils import randomInt
-from typing import List, Dict
-from src.utils import randomInt
+from typing import List
 import src.db as db
 
 def getAnswers():
-    return db.get(ANSWERS_KEY) or []
+    data = db.get(ANSWERS_KEY) or []
+    return { "data": data, "code": 200, "message": "{0} Answer(s) returned".format(len(data)) }
 
 def getAnswer(id: int):
     answers: List[Answer] = db.get(ANSWERS_KEY) or []
@@ -17,9 +17,12 @@ def getAnswer(id: int):
         if a["id"] == id:
             answer = a
     else:
-        return answer
+        if answer is not None:
+            return { "data": answer, "code": 200, "message": "Answer returned" }
+        else:
+            return { "data": None, "code": 404, "message": "Answer not found" }
     
-def addAnswer(req: Dict):
+def addAnswer(req: dict):
     questions: List[Question] = db.get(QUESTIONS_KEY) or []
     question: Question = None
     
@@ -29,14 +32,23 @@ def addAnswer(req: Dict):
     else:
         if question is not None:
             answers: List[Answer] = db.get(ANSWERS_KEY) or []
-            answer = dict(Answer(answer = req["answer"], question_id = question["id"], id = randomInt()))
+            question_already_answered: bool = False
             
-            answers.append(answer)
-            db.set(ANSWERS_KEY, answers)
+            for a in answers:
+                if a["question_id"] == question["id"]:
+                    question_already_answered = True
+            else:
+                if question_already_answered is False:
+                    answer = dict(Answer(answer = req["answer"], question_id = question["id"], id = randomInt()))
+                    
+                    answers.append(answer)
+                    db.set(ANSWERS_KEY, answers)
 
-            return { "code": 200, "data": answer}
+                    return { "data": answer, "code": 201, "message": "Answer saved" }
+                else:
+                    return { "data": None, "code": 400, "message": "Question already answered" }
         else:
-            return { "code": 404, "message": "Question not found" }
+            return { "data": None, "code": 404, "message": "Question not found" }
  
 def deleteAnswer(id: int):
     answers: List[Answer] = db.get(ANSWERS_KEY) or []
@@ -46,17 +58,15 @@ def deleteAnswer(id: int):
         if answers[i]["id"] == id:
             answer_index = i
     else:
-        if answer_index is not None: 
-            answer = answers[answer_index]
-
+        if answer_index is not None:
             del answers[answer_index]
             db.set(ANSWERS_KEY, answers)
 
-            return answer
+            return { "data": None, "code": 200, "message": "Answer deleted" }
         else:
-            return None
+            return { "data": None, "code": 404, "message": "Answer not found" }
 
-def editAnswer(id: int, req: Dict):
+def editAnswer(id: int, req: dict):
     questions: List[Question] = db.get(QUESTIONS_KEY) or []
     question: Question = None
     
@@ -82,8 +92,8 @@ def editAnswer(id: int, req: Dict):
                     answers.insert(answer_index, answer)
                     db.set(ANSWERS_KEY, answers)
                     
-                    return { "code": 200, "data": answer }
+                    return { "data": answer, "code": 200, "message": "Answer modified" }
                 else:
-                    return { "code": 404, "message": "Answer not found" }
+                    return { "data": None, "code": 404, "message": "Answer not found" }
         else:
-            return { "code": 404, "message": "Question not found" }
+            return { "data": None, "code": 404, "message": "Question not found" }
