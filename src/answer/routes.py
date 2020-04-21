@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Response as HttpResponse
 from src.response_models import Response
 from typing import Dict
-from src.answers.request_models import AddEditAnswer as Answer
-import src.answers.provider as provider
+from src.answer.request_models import AddEditAnswer as Answer
+import src.answer.provider as provider
 
 answers = APIRouter()
 

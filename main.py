@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from src.answers.routes import answers
-from src.questions.routes import questions
+from src.answer.routes import answers
+from src.question.routes import questions
 
 app = FastAPI()
 

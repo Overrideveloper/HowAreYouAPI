@@ -1,5 +1,5 @@
-from src.answers.models import Answer
-from src.questions.models import Question
+from src.answer.models import Answer
+from src.question.models import Question
 from src.constants import ANSWERS_KEY, QUESTIONS_KEY
 from src.utils import randomInt
 from typing import List

@@ -1,4 +1,4 @@
-from src.questions.models import Question
+from src.question.models import Question
 from src.constants import QUESTIONS_KEY
 from typing import List
 from src.utils import randomInt

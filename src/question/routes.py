@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Response as HttpResponse
 from src.response_models import Response
-from src.questions.request_models import AddEditQuestion as Question
-import src.questions.provider as provider
+from src.question.request_models import AddEditQuestion as Question
+import src.question.provider as provider
 
 questions = APIRouter()
 
