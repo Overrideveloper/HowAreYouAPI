@@ -16,8 +16,9 @@ def getAddress(id: int, response: HttpResponse):
     return data
 
 @address.post('/', response_model = Response, status_code = 201)
-def addAddress(payload: Address):
+def addAddress(payload: Address, response: HttpResponse):
     data: Response = provider.addAddress(dict(payload))
+    response.status_code = data["code"]
     return data
 
 @address.delete('/{id}', response_model = Response, status_code = 200)

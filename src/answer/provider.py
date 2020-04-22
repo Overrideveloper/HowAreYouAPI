@@ -2,14 +2,15 @@ from src.answer.models import Answer
 from src.question.models import Question
 from src.constants import ANSWERS_KEY, QUESTIONS_KEY
 from src.utils import randomInt
+from src.response_models import Response
 from typing import List
 import src.db as db
 
-def getAnswers():
+def getAnswers() -> Response:
     data: List[Answer] = db.get(ANSWERS_KEY) or []
     return { "data": data, "code": 200, "message": "{0} Answer(s) returned".format(len(data)) }
 
-def getAnswer(id: int):
+def getAnswer(id: int) -> Response:
     answers: List[Answer] = db.get(ANSWERS_KEY) or []
     answer: Answer = None
     
@@ -22,7 +23,7 @@ def getAnswer(id: int):
         else:
             return { "data": None, "code": 404, "message": "Answer not found" }
     
-def addAnswer(req: dict):
+def addAnswer(req: dict) -> Response:
     questions: List[Question] = db.get(QUESTIONS_KEY) or []
     question: Question = None
     
@@ -50,7 +51,7 @@ def addAnswer(req: dict):
         else:
             return { "data": None, "code": 404, "message": "Question not found" }
  
-def deleteAnswer(id: int):
+def deleteAnswer(id: int) -> Response:
     answers: List[Answer] = db.get(ANSWERS_KEY) or []
     answer_index = None
     
@@ -58,7 +59,7 @@ def deleteAnswer(id: int):
         if answers[i]["id"] == id:
             answer_index = i
     else:
-        if answer_index:
+        if answer_index is not None:
             del answers[answer_index]
             db.set(ANSWERS_KEY, answers)
 
@@ -66,7 +67,7 @@ def deleteAnswer(id: int):
         else:
             return { "data": None, "code": 404, "message": "Answer not found" }
 
-def editAnswer(id: int, req: dict):
+def editAnswer(id: int, req: dict) -> Response:
     questions: List[Question] = db.get(QUESTIONS_KEY) or []
     question: Question = None
     
@@ -82,7 +83,7 @@ def editAnswer(id: int, req: dict):
                 if answers[i]["id"] == id:
                     answer_index = i
             else:
-                if answer_index:
+                if answer_index is not None:
                     answer = answers[answer_index]
                     answer["question_id"] = question["id"]
                     answer["answer"] = req["answer"]

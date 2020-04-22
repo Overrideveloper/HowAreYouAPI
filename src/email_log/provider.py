@@ -3,6 +3,7 @@ from src.constants import EMAIL_LOG_KEY
 from typing import List
 from src.utils import randomInt
 from datetime import date as _date
+from src.response_models import Response
 import src.db as db
 
 def addTodayLog(count: int):
@@ -16,7 +17,7 @@ def addTodayLog(count: int):
     logs.append(log)
     db.set(EMAIL_LOG_KEY, logs)
 
-def getTodayLog():
+def getTodayLog() -> Response:
     logs: List[EmailLog] = db.get(EMAIL_LOG_KEY) or []
     
     today = _date.today()
