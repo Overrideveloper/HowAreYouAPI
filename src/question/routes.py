@@ -1,33 +1,32 @@
-from fastapi import APIRouter, Response as HttpResponse
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from src.response_models import Response
 from src.question.request_models import AddEditQuestion as Question
 import src.question.provider as provider
 
 question = APIRouter()
 
-@question.get('/', response_model = Response, status_code = 200)
+@question.get('/')
 def getQuestions():
-    return provider.getQuestions()
+    data: Response = provider.getQuestions()
+    return JSONResponse(content=data, status_code=data["code"])
 
-@question.get('/{id}', response_model = Response, status_code = 200)
-def getQuestion(id: int, response: HttpResponse):
+@question.get('/{id}')
+def getQuestion(id: int):
     data: Response = provider.getQuestion(id)
-    response.status_code = data["code"]
-    return data
+    return JSONResponse(content=data, status_code=data["code"])
 
-@question.post('/', response_model = Response, status_code = 201)
+@question.post('/')
 def addQuestion(payload: Question):
     data: Response = provider.addQuestion(dict(payload))
-    return data
+    return JSONResponse(content=data, status_code=data["code"])
 
-@question.delete('/{id}', response_model = Response, status_code = 200)
-def deleteQuestion(id: int, response: HttpResponse):
+@question.delete('/{id}')
+def deleteQuestion(id: int):
     data: Response = provider.deleteQuestion(id)
-    response.status_code = data["code"]
-    return data
+    return JSONResponse(content=data, status_code=data["code"])
 
-@question.put('/{id}', response_model = Response, status_code = 200)
-def editQuestion(id: int, payload: Question, response: HttpResponse):
+@question.put('/{id}')
+def editQuestion(id: int, payload: Question):
     data: Response = provider.editQuestion(id, dict(payload))
-    response.status_code = data["code"]
-    return data
+    return JSONResponse(content=data, status_code=data["code"])

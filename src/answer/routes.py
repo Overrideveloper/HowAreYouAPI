@@ -1,36 +1,32 @@
-from fastapi import APIRouter, Response as HttpResponse
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from src.response_models import Response
-from typing import Dict
 from src.answer.request_models import AddEditAnswer as Answer
 import src.answer.provider as provider
 
 answer = APIRouter()
 
-@answer.get('/', response_model = Response, status_code = 200)
+@answer.get('/')
 def getAnswers():
-    return provider.getAnswers()
+    data: Response = provider.getAnswers()
+    return JSONResponse(content=data, status_code=data["code"])
 
-@answer.get('/{id}', response_model = Response, status_code = 200)
-def getAnswer(id: int, response: HttpResponse):
+@answer.get('/{id}')
+def getAnswer(id: int):
     data: Response = provider.getAnswer(id)
-    response.status_code = data["code"]
-    return data
+    return JSONResponse(content=data, status_code=data["code"])
 
-@answer.post('/', response_model = Response, status_code = 201)
-def addAnswer(payload: Answer, response: HttpResponse):
+@answer.post('/')
+def addAnswer(payload: Answer):
     data: Response = provider.addAnswer(dict(payload))
-    response.status_code = data["code"]
-    return data
+    return JSONResponse(content=data, status_code=data["code"])
 
-@answer.delete('/{id}', response_model = Response, status_code = 200)
-def deleteAnswer(id: int, response: HttpResponse):
+@answer.delete('/{id}')
+def deleteAnswer(id: int):
     data: Response = provider.deleteAnswer(id)
-    response.status_code = data["code"]
-    return data
+    return JSONResponse(content=data, status_code=data["code"])
     
-@answer.put('/{id}', response_model = Response, status_code = 200)
-def editAnswer(id: int, payload: Answer, response: HttpResponse):
+@answer.put('/{id}')
+def editAnswer(id: int, payload: Answer):
     data: Response = provider.editAnswer(id, dict(payload))
-    response.status_code = data["code"]
-    return data
-    
+    return JSONResponse(content=data, status_code=data["code"])
