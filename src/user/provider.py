@@ -3,7 +3,7 @@ from src.constants import USERS_KEY
 from src.utils import randomInt, encodeJWT
 from src.response_models import Response
 from src.user.response_models import LoginResponse
-from src.user.request_models import SignupLoginUser as UserReq
+from src.user.request_models import SignupLoginUser as UserReq, TokenPayload
 from typing import List
 from datetime import date, timedelta
 import src.db as db
@@ -21,7 +21,7 @@ def signup(_req: UserReq) -> Response:
         users.append(user)
         db.set(USERS_KEY, users)
         
-        token = { "user": req["email"], "expires": time.mktime((date.today() + timedelta(days=7)).timetuple()) }
+        token = TokenPayload(user = req["email"], expires = time.mktime((date.today() + timedelta(days=7)).timetuple()), randomizer = randomInt())
         data = LoginResponse(email = user["email"], token = encodeJWT(token))
 
         return Response(data = dict(data), code = 201, message="User signed up successfully")
@@ -31,16 +31,13 @@ def login(_req: UserReq) -> Response:
     users: List[User] = db.get(USERS_KEY) or []
     
     if users:
-        user: User = None
-
         for _user in users:
             if req["email"] == _user["email"] and bcrypt.checkpw(req["password"].encode(), _user["password"].encode()):
                 user = _user
         else:
             if user:
-        
-                token = { "user": req["email"], "expires": time.mktime((date.today() + timedelta(days=7)).timetuple()) }
-                data = LoginResponse(email = dict(user)["email"], token = encodeJWT(token))
+                token = TokenPayload(user = req["email"], expires = time.mktime((date.today() + timedelta(days=7)).timetuple()), randomizer = randomInt())
+                data = LoginResponse(email = dict(user)["email"], token = encodeJWT(dict(token)))
 
                 return Response(data = dict(data), code = 200, message="User logged in succesfully")
             else:

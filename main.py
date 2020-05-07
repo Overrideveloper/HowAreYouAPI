@@ -1,7 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from src.utils import validationExceptionHandler
+from src.utils import validationExceptionHandler, jwtValidationHandler
 from src.answer.routes import answer
 from src.question.routes import question
 from src.address.routes import address
@@ -13,6 +13,10 @@ import src.email_log.provider as logProvider
 app = FastAPI()
 
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'], allow_credentials=True)
+
+@app.middleware('http')
+def validate_jwt(request: Request, call_next):
+    return jwtValidationHandler(request, call_next)
 
 @app.exception_handler(RequestValidationError)
 def validation_exception_handler(request, exc: RequestValidationError):
