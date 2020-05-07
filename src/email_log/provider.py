@@ -7,29 +7,31 @@ from src.response_models import Response
 import src.db as db
 
 def addTodayLog(count: int):
-    logs: List[EmailLog] = db.get(EMAIL_LOG_KEY) or []
+    logs: List[dict] = db.get(EMAIL_LOG_KEY) or []
     
     today = _date.today()
     date = "{day}/{month}/{year}".format(day = today.day, month = today.month, year = today.year)
 
-    log = dict(EmailLog(id = randomInt(), date = date, count = count))
+    log = EmailLog(id = randomInt(), date = date, count = count)
     
-    logs.append(log)
+    logs.append(dict(log))
     db.set(EMAIL_LOG_KEY, logs)
 
 def getTodaysLog() -> Response:
-    logs: List[EmailLog] = db.get(EMAIL_LOG_KEY) or []
+    logs: List[dict] = db.get(EMAIL_LOG_KEY) or []
+    response: Response = None
+    log: dict = None
     
     today = _date.today()
     date = "{day}/{month}/{year}".format(day = today.day, month = today.month, year = today.year)
-    
-    log: EmailLog = None
     
     for l in logs:
         if l["date"] == date:
             log = l
     else:
         if log:
-            return { "data": log, "code": 200, "message": "Log returned" }
+            response = Response(data = log, code = 200, message = "Log returned")
         else:
-            return { "data": None, "code": 200, "message": "Today's emails not sent yet" }
+            response = Response(data = None, code = 200, message = "Today's emails not sent yet")
+            
+    return response
