@@ -8,19 +8,19 @@ user = APIRouter()
 
 @user.get('/status')
 def getSystemUserStatus():
-    data = dict(provider.doesUserExist())
+    data: Response = provider.doesUserExist()
 
-    return JSONResponse(content=data, status_code=data["code"])
+    return JSONResponse(content = dict(data), status_code = data.code)
 
 @user.post('/signup')
 def signup(payload: User):
-    data = dict(provider.signup(payload))
+    data: Response = provider.signup(payload)
 
-    return JSONResponse(content=data, status_code=data["code"])
+    return JSONResponse(content = dict(data), status_code = data.code)
 
 @user.post('/login')
 def login(payload: User):
-    data = dict(provider.login(payload))
+    data: Response = provider.login(payload)
 
-    return JSONResponse(content=data, status_code=data["code"])
+    return JSONResponse(content = dict(data), status_code=data.code)
         

@@ -5,6 +5,7 @@ from src.constants import JWT_SECRET
 from src.response_models import Response
 from src.user.request_models import TokenPayload
 from datetime import date, timedelta
+from typing import Any
 import time
 import random
 import re
@@ -44,15 +45,18 @@ def decodeJWT(token: str) -> dict:
 
 async def jwtValidationHandler(request: Request, call_next):
     req = dict(request)
+    response: Any = None
     unauth_res = Response(code=401, data=None, message="You are not authorized to access this resource")
 
     if req["path"].find("api/user") > -1 or req["path"] == "/":
         response = await call_next(request)
     else:
+        token: str = None
+
         for header in req["headers"]:
             if header[0].decode() == "auth_token":
                 token = header[1].decode()
-        else:    
+        else:
             if token:
                 try:
                     payload = TokenPayload(**decodeJWT(token))

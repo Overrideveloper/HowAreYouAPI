@@ -12,9 +12,10 @@ import bcrypt
 
 def signup(req: UserReq) -> Response:
     users: List[dict] = db.get(USERS_KEY) or []
+    response: Response = None
     
     if users:
-        return Response(data = None, code = 403, message="This is a one-user system and a user already exists.")
+        response = Response(data = None, code = 403, message="This is a one-user system and a user already exists.")
     else:
         user = User(id=randomInt(), email=req.email, password=bcrypt.hashpw(req.password.encode(), bcrypt.gensalt()))
 
@@ -24,12 +25,17 @@ def signup(req: UserReq) -> Response:
         token = TokenPayload(user = user.email, expires = time.mktime((date.today() + timedelta(days=7)).timetuple()), randomizer = randomInt())
         data = LoginResponse(email = user.email, token = encodeJWT(dict(token)))
 
-        return Response(data = dict(data), code = 201, message="User signed up successfully")
+        response = Response(data = dict(data), code = 201, message="User signed up successfully")
+    
+    return response
 
 def login(req: UserReq) -> Response:
     users: List[dict] = db.get(USERS_KEY)
+    response: Response = None
     
     if users:
+        user: dict = None
+
         for _user in users:
             if req.email == _user["email"] and bcrypt.checkpw(req.password.encode(), _user["password"].encode()):
                 user = _user
@@ -38,16 +44,21 @@ def login(req: UserReq) -> Response:
                 token = TokenPayload(user = user["email"], expires = time.mktime((date.today() + timedelta(days=7)).timetuple()), randomizer = randomInt())
                 data = LoginResponse(email = user["email"], token = encodeJWT(dict(token)))
 
-                return Response(data = dict(data), code = 200, message="User logged in succesfully")
+                response = Response(data = dict(data), code = 200, message="User logged in succesfully")
             else:
-                return Response(data = None, code = 404, message="User not found")  
+                response = Response(data = None, code = 404, message="User not found")  
     else:
-        return Response(data = None, code = 404, message="User not found")
+        response = Response(data = None, code = 404, message="User not found")
+    
+    return response
 
 def doesUserExist() -> Response:
     users: List[dict] = db.get(USERS_KEY)
+    response: Response = None
     
     if users and len(users):
-        return Response(data = True, code = 200, message="System user exists")
+        response = Response(data = True, code = 200, message="System user exists")
     else:
-        return Response(data = False, code = 200, message="System user does not exist")
+        response = Response(data = False, code = 200, message="System user does not exist")
+    
+    return response
