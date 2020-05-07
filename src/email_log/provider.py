@@ -17,7 +17,7 @@ def addTodayLog(count: int):
     logs.append(log)
     db.set(EMAIL_LOG_KEY, logs)
 
-def getTodayLog() -> Response:
+def getTodaysLog() -> Response:
     logs: List[EmailLog] = db.get(EMAIL_LOG_KEY) or []
     
     today = _date.today()
