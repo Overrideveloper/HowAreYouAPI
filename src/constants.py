@@ -1,9 +1,14 @@
-QUESTIONS = ["How are you?", "How are you feeling?", "What are you doing?", "What did you do today?", "Have you eaten?",
-             "What did you eat?"]
-
 REDIS = {"HOST": "localhost", "PORT": 6379 }
 
 ANSWERS_KEY = "HOWAREYOU_ANSWERS"
 QUESTIONS_KEY = "HOWAREYOU_QUESTIONS"
 ADDRESS_KEY = "HOWAREYOU_ADDRESSES"
 EMAIL_LOG_KEY = "HOWAREYOU_EMAIL_LOGS"
+USERS_KEY = "HOWAREYOU_USERS"
+
+JWT_SECRET = "HEISENBERG"
+
+SENDGRID_KEY = "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"
+SENDER_EMAIL = "howareyou.app@protonmail.com"
+SUBJECT_NAME = "Banso"
+SUBJECT_TWITTER = "overrideveloper"

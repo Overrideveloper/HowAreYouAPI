@@ -1,8 +1,9 @@
-from typing import Any
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from src.constants import JWT_SECRET
 import random
 import re
+import jwt
 
 def randomInt() -> int:
     return random.randint(1000, 9999)
@@ -23,6 +24,12 @@ def validationExceptionHandler(exc: RequestValidationError) -> JSONResponse:
         errorList.append(errors[i]["msg"].replace("value", errorValue))
         errorValues.append(errorValue)
     
-    errorMsg = f"{errorCount} validation errors for this request: {str(errorValues)}"
+    errorMsg = f"{errorCount} validation error{'s' if not errorCount or errorCount > 1 else ''} for this request: {str(errorValues)}"
     
     return JSONResponse(content={ "data": errorList, "code": 400, "message": errorMsg }, status_code=400)
+
+def encodeJWT(payload: dict) -> str:
+    return jwt.encode(payload, JWT_SECRET, algorithm="HS256").decode()
+
+def decodeJWT(token: str) -> dict:
+    return jwt.decode(token.encode(), JWT_SECRET, algorithms=["HS256"])
