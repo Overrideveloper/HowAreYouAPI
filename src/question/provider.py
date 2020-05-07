@@ -1,4 +1,5 @@
 from src.question.models import Question
+from src.question.request_models import AddEditQuestion as ReqQuestion
 from src.constants import QUESTIONS_KEY
 from typing import List
 from src.utils import randomInt
@@ -6,34 +7,39 @@ import src.db as db
 from src.response_models import Response
     
 def getQuestions() -> Response:
-    data: List[Question] = db.get(QUESTIONS_KEY) or []
-    return { "data": data, "code": 200, "message": "{0} Question(s) returned".format(len(data)) }
+    data: List[dict] = db.get(QUESTIONS_KEY) or []
+    return Response(data = data, code = 200, message = "{0} Question(s) returned".format(len(data)))
 
 def getQuestion(id: int) -> Response:
-    questions: List[Question] = db.get(QUESTIONS_KEY) or []
-    question: Question = None
+    questions: List[dict] = db.get(QUESTIONS_KEY) or []
+    response: Response = None
+    question: dict = None
     
-    for q in questions:
-        if q["id"] == id:
-            question = q
+    for ques in questions:
+        if ques["id"] == id:
+            question = ques
     else:
         if question:
-            return { "data": question, "code": 200, "message": "Question returned" }
+            response = Response(data = question, code = 200, message = "Question returned")
         else:
-            return { "data": None, "code": 404, "message": "Question not found" }
+            response = Response(data = None, code = 404, message = "Question not found")
     
-def addQuestion(req: dict) -> Response:
-    questions: List[Question] = db.get(QUESTIONS_KEY) or []
-    question = dict(Question(question = req["question"], defaultAnswer = req["defaultAnswer"], id = randomInt()))
+    return response
     
-    questions.append(question)
+def addQuestion(req: ReqQuestion) -> Response:
+    questions: List[dict] = db.get(QUESTIONS_KEY) or []
+    
+    question = Question(question = req.question, defaultAnswer = req.defaultAnswer, id = randomInt())
+    
+    questions.append(dict(question))
     db.set(QUESTIONS_KEY, questions)
 
-    return { "data": question, "code": 200, "message": "Question saved" }
+    return Response(data = dict(question), code = 200, message = "Question saved")
 
 def deleteQuestion(id: int) -> Response:
-    questions: List[Question] = db.get(QUESTIONS_KEY) or []
-    question_index = None
+    questions: List[dict] = db.get(QUESTIONS_KEY) or []
+    response: Response = None
+    question_index: int = None
     
     for i in range(len(questions)):
         if questions[i]["id"] == id:
@@ -43,13 +49,16 @@ def deleteQuestion(id: int) -> Response:
             del questions[question_index]
             db.set(QUESTIONS_KEY, questions)
 
-            return { "data": None, "code": 200, "message": "Question deleted" }
+            response = Response(data = None, code = 200, message = "Question deleted")
         else:
-            return { "data": None, "code": 404, "message": "Question not found" }
+            response = Response(data = None, code = 404, message = "Question not found")
+    
+    return response
 
-def editQuestion(id: int, req: dict) -> Response:
-    questions: List[Question] = db.get(QUESTIONS_KEY) or []
-    question_index = None
+def editQuestion(id: int, req: ReqQuestion) -> Response:
+    questions: List[dict] = db.get(QUESTIONS_KEY) or []
+    response: Response = None
+    question_index: int = None
     
     for i in range(len(questions)):
         if questions[i]["id"] == id:
@@ -57,14 +66,16 @@ def editQuestion(id: int, req: dict) -> Response:
     else:
         if question_index is not None:
             question = questions[question_index]
-            question["question"] = req["question"]
-            question["defaultAnswer"] = req["defaultAnswer"]
+            question["question"] = req.question
+            question["defaultAnswer"] = req.defaultAnswer
             
             del questions[question_index]
 
             questions.insert(question_index, question)
             db.set(QUESTIONS_KEY, questions)
                     
-            return { "data": question, "code": 200, "message": "Question modified" }
+            response = Response(data = question, code = 200, message = "Question modified")
         else:
-            return { "data": None, "code": 404, "message": "Question not found" }
+            response = Response(data = None, code = 404, message = "Question not found")
+    
+    return response
