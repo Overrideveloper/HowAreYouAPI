@@ -1,51 +1,57 @@
 from src.address.models import Address
 from src.constants import ADDRESS_KEY
 from typing import List
-from src.utils import randomInt, validateEmail
+from src.utils import randomInt
 from src.response_models import Response
+from src.address.request_models import AddEditAddress as ReqAddress
 import src.db as db
 
 def getAddresses() -> Response:
-    data: List[Address] = db.get(ADDRESS_KEY) or []
-    return { "data": data, "code": 200, "message": "{0} Address(es) returned".format(len(data)) }
+    data: List[dict] = db.get(ADDRESS_KEY) or []
+    
+    return Response(data = data, code = 200, message = "{0} Address(es) returned".format(len(data)))
 
 def getAddress(id: int) -> Response:
-    addresses: List[Address] = db.get(ADDRESS_KEY) or []
-    address: Address = None
+    addresses: List[dict] = db.get(ADDRESS_KEY) or []
+    response: Response = None
+    address: dict = None
     
-    for a in addresses:
-        if a["id"] == id:
-            address = a
+    for addr in addresses:
+        if addr["id"] == id:
+            address = addr
     else:
         if address:
-            return { "data": address, "code": 200, "message": "Address returned" }
+            response = Response(data = address, code = 200, message = "Address returned")
         else:
-            return { "data": None, "code": 404, "message": "Address not found" }
+            response = Response(data = None, code = 404, message = "Address not found")
     
-def addAddress(req: dict) -> Response:
-    addresses: List[Address] = db.get(ADDRESS_KEY) or []
-    email_exists: bool = False
+    return response
     
-    for a in addresses:
-        if a["email"] == req["email"]:
+def addAddress(req: ReqAddress) -> Response:
+    addresses: List[dict] = db.get(ADDRESS_KEY) or []
+    response: Response = None
+    email_exists: bool = None
+
+    for addr in addresses:
+        if addr["email"] == req.email:
             email_exists = True
     else:
         if not email_exists:
-            if validateEmail(req["email"]):
-                address = dict(Address(name = req["name"], email = req["email"], id = randomInt()))
-                
-                addresses.append(address)
-                db.set(ADDRESS_KEY, addresses)
+            address = Address(name = req.name, email = req.email, id = randomInt())
+            
+            addresses.append(dict(address))
+            db.set(ADDRESS_KEY, addresses)
 
-                return { "data": address, "code": 201, "message": "Address saved" }
-            else:
-                return { "data": None, "code": 400, "message": "Email is invalid" }
+            response = Response(data = dict(address), code = 201, message = "Address saved")
         else:
-            return { "data": None, "code": 400, "message": "Email already in use by another address" }
+            response = Response(data = None, code = 400, message = "Email already in use by another address")
+            
+    return response
 
 def deleteAddress(id: int) -> Response:
-    addresses: List[Address] = db.get(ADDRESS_KEY) or []
-    address_index = None
+    addresses: List[dict] = db.get(ADDRESS_KEY) or []
+    response: Response = None
+    address_index: int = None
     
     for i in range(len(addresses)):
         if addresses[i]["id"] == id:
@@ -55,38 +61,40 @@ def deleteAddress(id: int) -> Response:
             del addresses[address_index]
             db.set(ADDRESS_KEY, addresses)
 
-            return { "data": None, "code": 200, "message": "Address deleted" }
+            response = Response(data = None, code = 200, message = "Address deleted")
         else:
-            return { "data": None, "code": 404, "message": "Address not found" }
+            response = Response(data = None, code = 404, message = "Address not found")
+    
+    return response
 
-def editAddress(id: int, req: dict) -> Response:
-    addresses: List[Address] = db.get(ADDRESS_KEY) or []
-    address_index = None
-    email_exists_index = None
+def editAddress(id: int, req: ReqAddress) -> Response:
+    addresses: List[dict] = db.get(ADDRESS_KEY) or []
+    response: Response = None
+    address_index: int = None
+    email_exists_index: int = None
     
     for i in range(len(addresses)):
         if addresses[i]["id"] == id:
             address_index = i
 
-        if addresses[i]["email"] == req["email"]:
+        if addresses[i]["email"] == req.email:
             email_exists_index = i
     else:
         if address_index is not None:
             if email_exists_index is None or (email_exists_index is not None and email_exists_index == address_index):
-                if validateEmail(req["email"]):
-                    address = addresses[address_index]
-                    address["name"] = req["name"]
-                    address["email"] = req["email"]
-                    
-                    del addresses[address_index]
+                address = addresses[address_index]
+                address["name"] = req.name
+                address["email"] = req.email
+                
+                del addresses[address_index]
 
-                    addresses.insert(address_index, address)
-                    db.set(ADDRESS_KEY, addresses)
-                            
-                    return { "data": address, "code": 200, "message": "Address modified" }
-                else:
-                    return { "data": None, "code": 400, "message": "Email is invalid" }
+                addresses.insert(address_index, address)
+                db.set(ADDRESS_KEY, addresses)
+                        
+                response = Response(data = address, code = 200, message = "Address modified")
             else:
-                return { "data": None, "code": 400, "message": "Email already in use by another address" }
+                response = Response(data = None, code = 400, message = "Email already in use by another address")
         else:
-            return { "data": None, "code": 404, "message": "Address not found" }
+            response = Response(data = None, code = 404, message = "Address not found")
+        
+    return response
