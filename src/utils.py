@@ -14,11 +14,6 @@ import jwt
 def randomInt() -> int:
     return random.randint(1000, 9999)
 
-def validateEmail(email: str) -> bool:
-    if (re.match("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$", email) != None):
-        return True
-    return False
-
 def validationExceptionHandler(exc: RequestValidationError) -> JSONResponse:
     errors = exc.errors()
     errorCount = len(errors)

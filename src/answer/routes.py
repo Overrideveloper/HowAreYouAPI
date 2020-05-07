@@ -27,9 +27,11 @@ def addAnswer(payload: ReqAnswer):
 @answer.delete('/{id}')
 def deleteAnswer(id: int):
     data: Response = provider.deleteAnswer(id)
+
     return JSONResponse(content = dict(data), status_code = data.code)
     
 @answer.put('/{id}')
 def editAnswer(id: int, payload: ReqAnswer):
     data: Response = provider.editAnswer(id, payload)
+
     return JSONResponse(content = dict(data), status_code = data.code)
