@@ -1,6 +1,7 @@
 from src.user.models import User
 from src.constants import USERS_KEY
-from src.utils import randomInt, encodeJWT
+from src.utils import randomInt
+from src.jwt.encode_decode import encodeJWT
 from src.response_models import Response
 from src.user.response_models import LoginResponse
 from src.user.request_models import SignupLoginUser as UserReq, TokenPayload

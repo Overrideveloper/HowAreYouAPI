@@ -1,26 +1,28 @@
-from fastapi import FastAPI, Request
-from fastapi.exceptions import RequestValidationError
+from fastapi import FastAPI, Request, Depends
+from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from src.utils import validationExceptionHandler, jwtValidationHandler
+from src.exceptions_handlers import validationExceptionHandler, httpExceptionHandler
 from src.answer.routes import answer
 from src.question.routes import question
 from src.address.routes import address
 from src.user.routes import user
+from src.jwt.jwt_bearer import JWTBearer
 from src.cron import schedule
 
 import src.email_log.provider as logProvider
 
 app = FastAPI()
+jwt_bearer = JWTBearer()
 
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'], allow_credentials=True)
 
-@app.middleware('http')
-def validate_jwt(request: Request, call_next):
-    return jwtValidationHandler(request, call_next)
-
 @app.exception_handler(RequestValidationError)
-def validation_exception_handler(request, exc: RequestValidationError):
+def validation_exception_handler(request: Request, exc: RequestValidationError):
     return validationExceptionHandler(exc)
+
+@app.exception_handler(HTTPException)
+def http_exception_handler(request: Request, exc: HTTPException):
+    return httpExceptionHandler(request, exc)
 
 @app.on_event("startup")
 def startup():
@@ -32,11 +34,11 @@ def index():
     return { "description": "HowAreYou Service API" }
 
 
-@app.get('/api/log/today')
+@app.get('/api/log/today', dependencies=[Depends(jwt_bearer)])
 def getTodaysEmailLog():
     return logProvider.getTodaysLog()
 
-app.include_router(answer, prefix="/api/answer", tags=["answer"])
-app.include_router(question, prefix="/api/question", tags=["question"])
-app.include_router(address, prefix="/api/address", tags=["address"])
+app.include_router(answer, prefix="/api/answer", tags=["answer"], dependencies=[Depends(jwt_bearer)])
+app.include_router(question, prefix="/api/question", tags=["question"], dependencies=[Depends(jwt_bearer)])
+app.include_router(address, prefix="/api/address", tags=["address"], dependencies=[Depends(jwt_bearer)])
 app.include_router(user, prefix="/api/user", tags=["user"])
