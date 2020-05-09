@@ -1,7 +1,10 @@
-from pydantic import BaseModel
-from typing import Any
+from pydantic.generics import GenericModel
+from typing import TypeVar, Generic, Optional
+from pydantic import Field
 
-class Response(BaseModel):
-    data: Any
+T = TypeVar('T')
+
+class Response(GenericModel, Generic[T]):
+    data: Optional[T]
     code: int
     message: str
