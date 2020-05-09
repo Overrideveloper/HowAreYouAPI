@@ -5,17 +5,17 @@ from src.constants import ANSWERS_KEY, QUESTIONS_KEY
 from src.utils import randomInt
 from src.response_models import Response
 
-from typing import List
+from typing import List, Union
 import src.db as db
 
-def getAnswers() -> Response:
+def getAnswers() -> Response[List[Answer]]:
     data: List[dict] = db.get(ANSWERS_KEY) or []
 
-    return Response(data = data, code = 200, message = "{0} Answer(s) returned".format(len(data)))
+    return Response[List[Answer]](data = data, code = 200, message = "{0} Answer(s) returned".format(len(data)))
 
-def getAnswer(id: int) -> Response:
+def getAnswer(id: int) -> Union[Response[Answer], Response]:
     answers: List[dict] = db.get(ANSWERS_KEY) or []
-    response: Response = None
+    response: Union[Response[Answer], Response] = None
     answer: dict = None
     
     for answ in answers:
@@ -23,15 +23,15 @@ def getAnswer(id: int) -> Response:
             answer = answ
     else:
         if answer:
-            response = Response(data = answer, code = 200, message = "Answer returned")
+            response = Response[Answer](data = Answer(**answer), code = 200, message = "Answer returned")
         else:
             response = Response(data = None, code = 404, message = "Answer not found")
     
     return response
     
-def addAnswer(req: ReqAnswer) -> Response:
+def addAnswer(req: ReqAnswer) -> Union[Response[Answer], Response]:
     questions: List[dict] = db.get(QUESTIONS_KEY) or []
-    response: Response = None
+    response: Union[Response[Answer], Response] = None
     question: dict = None
     
     for ques in questions:
@@ -52,9 +52,9 @@ def addAnswer(req: ReqAnswer) -> Response:
                     answers.append(dict(answer))
                     db.set(ANSWERS_KEY, answers)
 
-                    response = Response(data = dict(answer), code = 201, message = "Answer saved")
+                    response = Response[Answer](data = answer, code = 201, message = "Answer saved")
                 else:
-                    response = Response(data = None, code = 400, message = "Question already answered")
+                    response = Response(data = None, code = 403, message = "Question already answered")
         else:
             response = Response(data = None, code = 404, message = "Question not found")
     
@@ -73,16 +73,16 @@ def deleteAnswer(id: int) -> Response:
             del answers[answer_index]
             db.set(ANSWERS_KEY, answers)
 
-            response = Response (data = None, code = 200, message = "Answer deleted")
+            response = Response(data = None, code = 200, message = "Answer deleted")
         else:
             response = Response(data = None, code = 404, message = "Answer not found")
     
     return response
 
-def editAnswer(id: int, req: ReqAnswer) -> Response:
+def editAnswer(id: int, req: ReqAnswer) -> Union[Response[Answer], Response]:
     questions: List[dict] = db.get(QUESTIONS_KEY) or []
-    question: Question = None
-    response: Response = None
+    question: dict = None
+    response: Union[Response[Answer], Response] = None
     
     for ques in questions:
         if ques["id"] == req.question_id:
@@ -106,7 +106,7 @@ def editAnswer(id: int, req: ReqAnswer) -> Response:
                     answers.insert(answer_index, answer)
                     db.set(ANSWERS_KEY, answers)
                     
-                    response = Response(data = answer, code = 200, message = "Answer modified")
+                    response = Response[Answer](data = Answer(**answer), code = 200, message = "Answer modified")
                 else:
                     response = Response(data = None, code = 404, message = "Answer not found")
         else:
