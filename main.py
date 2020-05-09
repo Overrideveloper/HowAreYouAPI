@@ -8,6 +8,9 @@ from src.address.routes import address
 from src.user.routes import user
 from src.jwt.jwt_bearer import JWTBearer
 from src.cron import schedule
+from src.response_models import Response
+from src.email_log.models import EmailLog
+from typing import Dict
 
 import src.email_log.provider as logProvider
 
@@ -29,12 +32,12 @@ def startup():
     pass
     # schedule()
     
-@app.get('/')
+@app.get('/', response_model=Dict[str, str])
 def index():
     return { "description": "HowAreYou Service API" }
 
 
-@app.get('/api/log/today', dependencies=[Depends(jwt_bearer)])
+@app.get('/api/log/today', summary="Get Today's Email Log", description="Get email log information for today.", response_model=Response[EmailLog])
 def getTodaysEmailLog():
     return logProvider.getTodaysLog()
 
