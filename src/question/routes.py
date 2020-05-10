@@ -24,7 +24,7 @@ def getQuestion(id: int = Path(..., description="The ID of the question to get")
 
 @question.post('/', summary="Add Question", description="Create and save a question", response_model=Response[Question],
 responses={ 400: generate400ResContent(), 422: {} })
-def addQuestion(payload: ReqQuestion = Body(..., description="The question to be created")):
+def addQuestion(payload: ReqQuestion = Body(..., description="The question to create")):
     data: Union[Response[Question], Response] = provider.addQuestion(payload)
 
     return JSONResponse(content = data.dict(), status_code = data.code)
@@ -41,4 +41,4 @@ responses={ 404: generate404ResContent("Question"), 400: generate400ResContent()
 def editQuestion(id: int = Path(..., description="The ID of the question to edit"), payload: ReqQuestion = Body(..., description="The question data to be used in the edit")):
     data: Union[Response[Question], Response] = provider.editQuestion(id, payload)
 
-    return JSONResponse(content = dict(data), status_code = data.code)
+    return JSONResponse(content = data.dict(), status_code = data.code)

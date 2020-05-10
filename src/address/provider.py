@@ -1,19 +1,19 @@
 from src.address.models import Address
 from src.constants import ADDRESS_KEY
-from typing import List
+from typing import List, Union
 from src.utils import randomInt
 from src.response_models import Response
 from src.address.request_models import AddEditAddress as ReqAddress
 import src.db as db
 
-def getAddresses() -> Response:
+def getAddresses() -> Response[List[Address]]:
     data: List[dict] = db.get(ADDRESS_KEY) or []
     
-    return Response(data = data, code = 200, message = "{0} Address(es) returned".format(len(data)))
+    return Response[List[Address]](data = data, code = 200, message = "{0} Address(es) returned".format(len(data)))
 
-def getAddress(id: int) -> Response:
+def getAddress(id: int) -> Union[Response[Address], Response]:
     addresses: List[dict] = db.get(ADDRESS_KEY) or []
-    response: Response = None
+    response: Union[Response[Address], Response] = None
     address: dict = None
     
     for addr in addresses:
@@ -21,15 +21,15 @@ def getAddress(id: int) -> Response:
             address = addr
     else:
         if address:
-            response = Response(data = address, code = 200, message = "Address returned")
+            response = Response[Address](data = Address(**address), code = 200, message = "Address returned")
         else:
             response = Response(data = None, code = 404, message = "Address not found")
     
     return response
     
-def addAddress(req: ReqAddress) -> Response:
+def addAddress(req: ReqAddress) -> Union[Response[Address], Response]:
     addresses: List[dict] = db.get(ADDRESS_KEY) or []
-    response: Response = None
+    response: Union[Response[Address], Response] = None
     email_exists: bool = None
 
     for addr in addresses:
@@ -39,10 +39,10 @@ def addAddress(req: ReqAddress) -> Response:
         if not email_exists:
             address = Address(name = req.name, email = req.email, id = randomInt())
             
-            addresses.append(dict(address))
+            addresses.append(address.dict())
             db.set(ADDRESS_KEY, addresses)
 
-            response = Response(data = dict(address), code = 201, message = "Address saved")
+            response = Response[Address](data = address, code = 201, message = "Address saved")
         else:
             response = Response(data = None, code = 400, message = "Email already in use by another address")
             
@@ -67,9 +67,9 @@ def deleteAddress(id: int) -> Response:
     
     return response
 
-def editAddress(id: int, req: ReqAddress) -> Response:
+def editAddress(id: int, req: ReqAddress) -> Union[Response[Address], Response]:
     addresses: List[dict] = db.get(ADDRESS_KEY) or []
-    response: Response = None
+    response: Union[Response[Address], Response] = None
     address_index: int = None
     email_exists_index: int = None
     
@@ -91,7 +91,7 @@ def editAddress(id: int, req: ReqAddress) -> Response:
                 addresses.insert(address_index, address)
                 db.set(ADDRESS_KEY, addresses)
                         
-                response = Response(data = address, code = 200, message = "Address modified")
+                response = Response[Address](data = Address(**address), code = 200, message = "Address modified")
             else:
                 response = Response(data = None, code = 400, message = "Email already in use by another address")
         else:

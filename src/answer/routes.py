@@ -24,7 +24,7 @@ def getAnswer(id: int = Path(..., description="The ID of the answer to get")):
 
 @answer.post('/', summary="Add Answer", description="Create and save an answer to a question", status_code=201, response_model=Response[Answer],
 responses={ 404: generate404ResContent("Question"), 400: generate400ResContent(), 403: generate403ResContent("Question already answered"), 422: {} })
-def addAnswer(payload: ReqAnswer = Body(..., description="The answer to be created")):
+def addAnswer(payload: ReqAnswer = Body(..., description="The answer to create")):
     data: Union[Response[Answer], Response] = provider.addAnswer(payload)
 
     return JSONResponse(content = data.dict(), status_code = data.code)
