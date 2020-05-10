@@ -8,3 +8,7 @@ class Response(GenericModel, Generic[T]):
     data: Optional[T]
     code: int
     message: str
+    
+    
+    class Config:
+        allow_arbitrary_types = True

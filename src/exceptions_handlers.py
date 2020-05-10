@@ -17,7 +17,7 @@ def validationExceptionHandler(exc: RequestValidationError) -> JSONResponse:
     errorMsg = f"{errorCount} validation error{'s' if not errorCount or errorCount > 1 else ''} for this request: {str(errorValues)}"
     data = Response(data = errorList, code = 400, message = errorMsg)
 
-    return JSONResponse(content = dict(data), status_code = data.code)
+    return JSONResponse(content = data.dict(), status_code = data.code)
 
 def httpExceptionHandler(request: Request, exc: HTTPException):
     data: Response = None
@@ -27,4 +27,4 @@ def httpExceptionHandler(request: Request, exc: HTTPException):
     else:
         data = Response(code = exc.status_code, data = exc.detail, message = "An error occurred. Please try again.")    
     
-    return JSONResponse(content = dict(data), status_code = data.code)
+    return JSONResponse(content = data.dict(), status_code = data.code)
