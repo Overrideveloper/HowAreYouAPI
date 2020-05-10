@@ -15,14 +15,14 @@ def getAnswers():
 
     return JSONResponse(content = data.dict(), status_code = data.code)
 
-@answer.get('/{id}', summary="Get Answer", description="Get an answer", response_model=Union[Response[Answer], Response],
+@answer.get('/{id}', summary="Get Answer", description="Get an answer", response_model=Response[Answer],
 responses={ 404: generate404ResContent("Answer"), 400: generate400ResContent(), 422: {} })
-def getAnswer(id: int = Path(..., description="The ID of the answer to get", )):
+def getAnswer(id: int = Path(..., description="The ID of the answer to get")):
     data: Union[Response[Answer], Response] = provider.getAnswer(id)
 
     return JSONResponse(content = data.dict(), status_code = data.code)
 
-@answer.post('/', summary="Add Answer", description="Create and save an answer to a question", status_code=201, response_model=Union[Response[Answer], Response],
+@answer.post('/', summary="Add Answer", description="Create and save an answer to a question", status_code=201, response_model=Response[Answer],
 responses={ 404: generate404ResContent("Question"), 400: generate400ResContent(), 403: generate403ResContent("Question already answered"), 422: {} })
 def addAnswer(payload: ReqAnswer = Body(..., description="The answer to be created")):
     data: Union[Response[Answer], Response] = provider.addAnswer(payload)
@@ -36,7 +36,7 @@ def deleteAnswer(id: int = Path(..., description="The ID of the answer to delete
 
     return JSONResponse(content = data.dict(), status_code = data.code)
     
-@answer.put('/{id}', summary="Edit Answer", description="Edit an answer", response_model=Union[Response[Answer], Response],
+@answer.put('/{id}', summary="Edit Answer", description="Edit an answer", response_model=Response[Answer],
 responses={ 404: generate404ResContent("Answer"), 400: generate400ResContent(), 422: {} })
 def editAnswer(id: int = Path(..., description="The ID of the answer to edit"), payload: ReqAnswer = Body(..., description="The answer data to be used in the edit")):
     data: Union[Response[Answer], Response] = provider.editAnswer(id, payload)

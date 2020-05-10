@@ -49,7 +49,7 @@ def addAnswer(req: ReqAnswer) -> Union[Response[Answer], Response]:
                 if not question_already_answered:
                     answer = Answer(answer = req.answer, question_id = req.question_id, id = randomInt())
                     
-                    answers.append(dict(answer))
+                    answers.append(answer.dict())
                     db.set(ANSWERS_KEY, answers)
 
                     response = Response[Answer](data = answer, code = 201, message = "Answer saved")

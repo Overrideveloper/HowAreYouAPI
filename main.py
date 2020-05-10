@@ -32,16 +32,16 @@ def startup():
     pass
     # schedule()
     
-@app.get('/', response_model=Dict[str, str])
+@app.get('/', tags=["Index"], response_model=Dict[str, str])
 def index():
     return { "description": "HowAreYou Service API" }
 
 
-@app.get('/api/log/today', summary="Get Today's Email Log", description="Get email log information for today.", response_model=Response[EmailLog])
+@app.get('/api/log/today', tags=["Email Log"], summary="Get Today's Email Log", description="Get email log information for today.", response_model=Response[EmailLog])
 def getTodaysEmailLog():
     return logProvider.getTodaysLog()
 
-app.include_router(answer, prefix="/api/answer", tags=["answer"], dependencies=[Depends(jwt_bearer)])
-app.include_router(question, prefix="/api/question", tags=["question"], dependencies=[Depends(jwt_bearer)])
-app.include_router(address, prefix="/api/address", tags=["address"], dependencies=[Depends(jwt_bearer)])
-app.include_router(user, prefix="/api/user", tags=["user"])
+app.include_router(answer, prefix="/api/answer", tags=["Answer"], dependencies=[Depends(jwt_bearer)])
+app.include_router(question, prefix="/api/question", tags=["Question"], dependencies=[Depends(jwt_bearer)])
+app.include_router(address, prefix="/api/address", tags=["Address"], dependencies=[Depends(jwt_bearer)])
+app.include_router(user, prefix="/api/user", tags=["User"])

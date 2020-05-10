@@ -27,7 +27,6 @@ class JWTBearer(HTTPBearer):
             raise HTTPException(status_code = 401, detail = "You are not authorized to access this resource")
     
     def verify_jwt(self, jwtoken: str) -> bool:
-        print(jwtoken)
         payload: TokenPayload = None
         isTokenValid: bool = False
 
@@ -37,7 +36,6 @@ class JWTBearer(HTTPBearer):
             payload = None
 
         if payload:
-            print(dict(payload))
             if time.mktime(date.today().timetuple()) > payload.expires:
                 pass
             else:
