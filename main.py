@@ -44,4 +44,4 @@ def getTodaysEmailLog():
 app.include_router(answer, prefix="/api/answer", tags=["Answer"], dependencies=[Depends(jwt_bearer)])
 app.include_router(question, prefix="/api/question", tags=["Question"], dependencies=[Depends(jwt_bearer)])
 app.include_router(address, prefix="/api/address", tags=["Address"], dependencies=[Depends(jwt_bearer)])
-app.include_router(user, prefix="/api/user", tags=["User"])
+app.include_router(user, prefix="/api/auth", tags=["Auth"])

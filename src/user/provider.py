@@ -5,34 +5,34 @@ from src.jwt.encode_decode import encodeJWT
 from src.response_models import Response
 from src.user.response_models import LoginResponse
 from src.user.request_models import SignupLoginUser as UserReq, TokenPayload
-from typing import List
+from typing import List, Union
 from datetime import date, timedelta
 import src.db as db
 import time
 import bcrypt
 
-def signup(req: UserReq) -> Response:
+def signup(req: UserReq) -> Union[Response[LoginResponse], Response]:
     users: List[dict] = db.get(USERS_KEY) or []
-    response: Response = None
+    response: Union[Response[LoginResponse], Response] = None
     
     if users:
         response = Response(data = None, code = 403, message="This is a one-user system and a user already exists.")
     else:
         user = User(id=randomInt(), email=req.email, password=bcrypt.hashpw(req.password.encode(), bcrypt.gensalt()))
 
-        users.append(dict(user))
+        users.append(user.dict())
         db.set(USERS_KEY, users)
         
         token = TokenPayload(user = user.email, expires = time.mktime((date.today() + timedelta(days=7)).timetuple()), randomizer = randomInt())
-        data = LoginResponse(email = user.email, token = encodeJWT(dict(token)))
+        loginRes = LoginResponse(email = user.email, token = encodeJWT(token.dict()))
 
-        response = Response(data = dict(data), code = 201, message="User signed up successfully")
+        response = Response[LoginResponse](data = loginRes, code = 201, message="User signed up successfully")
     
     return response
 
-def login(req: UserReq) -> Response:
+def login(req: UserReq) -> Union[Response[LoginResponse], Response]:
     users: List[dict] = db.get(USERS_KEY)
-    response: Response = None
+    response: Union[Response[LoginResponse], Response] = None
     
     if users:
         user: dict = None
@@ -43,9 +43,9 @@ def login(req: UserReq) -> Response:
         else:
             if user:
                 token = TokenPayload(user = user["email"], expires = time.mktime((date.today() + timedelta(days=7)).timetuple()), randomizer = randomInt())
-                data = LoginResponse(email = user["email"], token = encodeJWT(dict(token)))
+                loginRes = LoginResponse(email = user["email"], token = encodeJWT(token.dict()))
 
-                response = Response(data = dict(data), code = 200, message="User logged in succesfully")
+                response = Response[LoginResponse](data = loginRes, code = 200, message="User logged in succesfully")
             else:
                 response = Response(data = None, code = 404, message="User not found")  
     else:
@@ -53,13 +53,13 @@ def login(req: UserReq) -> Response:
     
     return response
 
-def doesUserExist() -> Response:
+def doesUserExist() -> Response[bool]:
     users: List[dict] = db.get(USERS_KEY)
-    response: Response = None
+    response: Response[bool] = None
     
     if users and len(users):
-        response = Response(data = True, code = 200, message="System user exists")
+        response = Response[bool](data = True, code = 200, message="System user exists")
     else:
-        response = Response(data = False, code = 200, message="System user does not exist")
+        response = Response[bool](data = False, code = 200, message="System user does not exist")
     
     return response
