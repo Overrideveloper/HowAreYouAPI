@@ -17,7 +17,7 @@ def getAddresses():
 
 @address.get('/{id}', summary="Get Address", description="Get an address", response_model=Response[Address],
 responses={ 404: generate404ResContent("Address"), 400: generate400ResContent(), 422: {} })
-def getAddress(id: int = Path(..., description="The ID of the address to get")):
+def getAddress(id: int = Path(..., gt=0, description="The ID of the address to get")):
     data: Union[Response[Address], Response] = provider.getAddress(id)
 
     return JSONResponse(content = data.dict(), status_code = data.code)
@@ -31,14 +31,14 @@ def addAddress(payload: ReqAddress = Body(..., description="The address to creat
 
 @address.delete('/{id}', summary="Delete Address", description="Delete an address", response_model=Response,
 responses={ 400: generate400ResContent(), 404: generate404ResContent("Address"), 422: {} })
-def deleteAddress(id: int = Path(..., description="The ID of the address to delete")):
+def deleteAddress(id: int = Path(..., gt=0, description="The ID of the address to delete")):
     data: Response = provider.deleteAddress(id)
 
     return JSONResponse(content = data.dict(), status_code = data.code)
 
 @address.put('/{id}', summary="Edit Address", description="Edit an address", response_model=Response[Address],
 responses={ 400: generate400ResContent(), 404: generate404ResContent("Address"), 422: {} })
-def editAddress(id: int = Path(..., description="The ID of the address to edit"), payload: ReqAddress = Body(..., description="The address data to be used in the edit")):
+def editAddress(id: int = Path(..., gt=0, description="The ID of the address to edit"), payload: ReqAddress = Body(..., description="The address data to be used in the edit")):
     data: Union[Response[Address], Response] = provider.editAddress(id, payload)
 
     return JSONResponse(content = data.dict(), status_code = data.code)

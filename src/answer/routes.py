@@ -17,7 +17,7 @@ def getAnswers():
 
 @answer.get('/{id}', summary="Get Answer", description="Get an answer", response_model=Response[Answer],
 responses={ 404: generate404ResContent("Answer"), 400: generate400ResContent(), 422: {} })
-def getAnswer(id: int = Path(..., description="The ID of the answer to get")):
+def getAnswer(id: int = Path(..., gt=0, description="The ID of the answer to get")):
     data: Union[Response[Answer], Response] = provider.getAnswer(id)
 
     return JSONResponse(content = data.dict(), status_code = data.code)
@@ -31,14 +31,14 @@ def addAnswer(payload: ReqAnswer = Body(..., description="The answer to create")
 
 @answer.delete('/{id}', summary="Delete Answer", description="Delete an answer", response_model=Response,
 responses={ 404: generate404ResContent("Answer"), 400: generate400ResContent(), 422: {} })
-def deleteAnswer(id: int = Path(..., description="The ID of the answer to delete")):
+def deleteAnswer(id: int = Path(..., gt=0, description="The ID of the answer to delete")):
     data: Response = provider.deleteAnswer(id)
 
     return JSONResponse(content = data.dict(), status_code = data.code)
     
 @answer.put('/{id}', summary="Edit Answer", description="Edit an answer", response_model=Response[Answer],
 responses={ 404: generate404ResContent("Answer"), 400: generate400ResContent(), 422: {} })
-def editAnswer(id: int = Path(..., description="The ID of the answer to edit"), payload: ReqAnswer = Body(..., description="The answer data to be used in the edit")):
+def editAnswer(id: int = Path(..., gt=0, description="The ID of the answer to edit"), payload: ReqAnswer = Body(..., description="The answer data to be used in the edit")):
     data: Union[Response[Answer], Response] = provider.editAnswer(id, payload)
 
     return JSONResponse(content = data.dict(), status_code = data.code)
