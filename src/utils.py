@@ -22,7 +22,7 @@ def generate400ResContent() -> dict:
         "model": Response[List[str]],
         "content": {
             "application/json": {
-                "example": { "data": ["field required"], "code": 400, "message": f"1 validation error for this request: ['field']" }       
+                "example": { "data": [{ "field": "name", "error": "name is required" }], "code": 400, "message": f"1 validation error for this request: ['name']" }       
             }
         }
     }
