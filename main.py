@@ -2,10 +2,10 @@ from fastapi import FastAPI, Request, Depends
 from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from src.exceptions_handlers import validationExceptionHandler, httpExceptionHandler
-from src.modules.answer.routes import answer
-from src.modules.question.routes import question
-from src.modules.address.routes import address
-from src.modules.user.routes import user
+from src.modules.answer.routes import answerRouter
+from src.modules.question.routes import questionRouter
+from src.modules.address.routes import addressRouter
+from src.modules.user.routes import userRouter
 from src.jwt.jwt_bearer import JWTBearer
 from src.scheduler.cron import schedule
 from src.response_models import Response
@@ -43,7 +43,7 @@ dependencies=[Depends(jwt_bearer)])
 def getTodaysEmailLog():
     return emailLogProvider.getTodaysLog()
 
-app.include_router(answer, prefix="/api/answer", tags=["Answer"], dependencies=[Depends(jwt_bearer)])
-app.include_router(question, prefix="/api/question", tags=["Question"], dependencies=[Depends(jwt_bearer)])
-app.include_router(address, prefix="/api/address", tags=["Address"], dependencies=[Depends(jwt_bearer)])
-app.include_router(user, prefix="/api/auth", tags=["Auth"])
+app.include_router(answerRouter, prefix="/api/answer", tags=["Answer"], dependencies=[Depends(jwt_bearer)])
+app.include_router(questionRouter, prefix="/api/question", tags=["Question"], dependencies=[Depends(jwt_bearer)])
+app.include_router(addressRouter, prefix="/api/address", tags=["Address"], dependencies=[Depends(jwt_bearer)])
+app.include_router(userRouter, prefix="/api/auth", tags=["Auth"])

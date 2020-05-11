@@ -9,31 +9,31 @@ from src.jwt.jwt_bearer import JWTBearer
 from src.db import Database
 from src.modules.user.provider import UserProvider
 
-user = APIRouter()
+userRouter = APIRouter()
 jwt_bearer = JWTBearer()
 userProvider = UserProvider(Database())
 
-@user.get('/status', summary="Get System User Status", description="Check if a system user exists or not. This is a one-user system.", response_model=Response[bool])
+@userRouter.get('/status', summary="Get System User Status", description="Check if a system user exists or not. This is a one-user system.", response_model=Response[bool])
 def getSystemUserStatus():
     data: Response[bool] = userProvider.doesUserExist()
 
     return JSONResponse(content = data.dict(), status_code = data.code)
 
-@user.post('/signup', summary="Signup", description="Create a user account and get an authorization token", response_model=Response[LoginResponse],
+@userRouter.post('/signup', summary="Signup", description="Create a user account and get an authorization token", response_model=Response[LoginResponse],
 responses={ 400: generate400ResContent(), 403: generate403ResContent("This is a one-user system and a user already exists."), 422: {} })
 def signup(payload: User = Body(..., description="The user to sign up")):
     data: Union[Response[LoginResponse], Response] = userProvider.signup(payload)
 
     return JSONResponse(content = data.dict(), status_code = data.code)
 
-@user.post('/login', summary="Login", description="Log in [as user] and get an authorization token", response_model=Response[LoginResponse],
+@userRouter.post('/login', summary="Login", description="Log in [as user] and get an authorization token", response_model=Response[LoginResponse],
 responses={ 400: generate400ResContent(), 404: generate404ResContent("User"), 422: {}})
 def login(payload: User = Body(..., description="The user to log in")):
     data: Union[Response[LoginResponse], Response] = userProvider.login(payload)
 
     return JSONResponse(content = data.dict(), status_code = data.code)
 
-@user.put('/change-password/{id}', summary="Change Password", description="Change a user's password", response_model=Response[bool],
+@userRouter.put('/change-password/{id}', summary="Change Password", description="Change a user's password", response_model=Response[bool],
 responses={ 400: generate400ResContent(), 404: generate404ResContent("User"), 422: {}}, dependencies=[Depends(jwt_bearer)])
 def changePassword(id: int = Path(..., description="The ID of the user account whose password is to be changed"),
 payload: ChangePassword = Body(..., description="The old and new passwords")):
@@ -41,7 +41,7 @@ payload: ChangePassword = Body(..., description="The old and new passwords")):
     
     return JSONResponse(content = data.dict(), status_code = data.code)
 
-@user.post('/reset-password', summary="Reset Password", description="Reset a user's forgotten password", response_model=Response[bool],
+@userRouter.post('/reset-password', summary="Reset Password", description="Reset a user's forgotten password", response_model=Response[bool],
 responses={ 400: generate400ResContent(), 404: generate404ResContent("User"), 422: {}})
 def resetPassword(payload: ResetPassword = Body(..., description="Email of the user account whose password is to be reset")):
     data: Union[Response[bool], Response] = userProvider.resetPassword(payload)
