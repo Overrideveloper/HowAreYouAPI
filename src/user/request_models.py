@@ -23,3 +23,13 @@ class ChangePassword(BaseModel):
                 "new_password": "maryisnotpoppinagain"
             }
         }
+        
+class ResetPassword(BaseModel):
+    email: str = Field(..., regex="^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "mary@poppins.com"
+            }
+        }

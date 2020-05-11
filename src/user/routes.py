@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Path, Depends
 from fastapi.responses import JSONResponse
 from src.response_models import Response
-from src.user.request_models import SignupLoginUser as User, ChangePassword
+from src.user.request_models import SignupLoginUser as User, ChangePassword, ResetPassword
 from src.user.response_models import LoginResponse
 from src.utils import generate400ResContent, generate403ResContent, generate404ResContent
 from typing import Union
@@ -36,5 +36,12 @@ responses={ 400: generate400ResContent(), 404: generate404ResContent("User"), 42
 def changePassword(id: int = Path(..., description="The ID of the user account whose password is to be changed"),
 payload: ChangePassword = Body(..., description="The old and new passwords")):
     data: Union[Response[bool], Response] = provider.changePassword(id, payload)
+    
+    return JSONResponse(content = data.dict(), status_code = data.code)
+
+@user.post('/reset-password', summary="Reset Password", description="Reset a user's forgotten password", response_model=Response[bool],
+responses={ 400: generate400ResContent(), 404: generate404ResContent("User"), 422: {}})
+def resetPassword(payload: ResetPassword = Body(..., description="Email of the user account whose password is to be reset")):
+    data: Union[Response[bool], Response] = provider.resetPassword(payload)
     
     return JSONResponse(content = data.dict(), status_code = data.code)

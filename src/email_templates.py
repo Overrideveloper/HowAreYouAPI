@@ -1,5 +1,31 @@
 from src.constants import SUBJECT_NAME, SUBJECT_TWITTER
 
+password_reset = """\
+    <html>
+    <body style="margin: 0; padding: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji'; line-height: 1.5;">
+        <table align="center" border="1" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;">
+            <tr>
+                <td bgcolor="#1b053d" style="padding: 24px 32px 24px 32px;">
+                    <h6 style="font-size: 22px; font-weight: 400; color: white; margin: 0;">How are you, {subject}?</h6>
+                </td>
+            </tr>
+            <tr>
+                <td bgcolor="#ffffff" style="padding: 24px 32px 24px 32px;">
+                    <h2 style="margin: 0; font-weight: 400; font-size: 24px;">Hello!</h2>
+                    <p style="margin: 10px 0 0 0; font-weight: 300; font-size: 14px;">Your password has been reset and a password has been auto-generated for you: <b style="font-weight: 400;">{password}</b>.</p>
+
+                    <p style="margin: 0; font-weight: 300; font-size: 14px;">Ensure to change the password as soon as possible. Have a great day!</p>
+                </td>
+            </tr>
+            <tr>
+                <td bgcolor="#1b053d" style="padding: 16px 32px 16px 32px;"></td>
+            </tr>
+        </table>
+    </body>
+    </html>
+"""
+
+
 daily_answers = """\
     <html>
     <body style="margin: 0; padding: 0; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji'; line-height: 1.5;">
@@ -12,7 +38,7 @@ daily_answers = """\
             <tr>
                 <td bgcolor="#ffffff" style="padding: 24px 32px 24px 32px;">
                     <h2 style="margin: 0; font-weight: 400; font-size: 24px;">Hello {name}!</h2>
-                    <p style="margin: 10px 0 0 0; font-weight: 300; font-size: 14px;">This is <b style="font-weight: 400;">Wisdom Banso</b> and these are today's answers to the frequently asked <b style="font-weight: 400;">"How are you?"</b>-type questions.</p>
+                    <p style="margin: 10px 0 0 0; font-weight: 300; font-size: 14px;">This is <b style="font-weight: 400;">{subject}</b> and these are today's answers to the frequently asked <b style="font-weight: 400;">"How are you?"</b>-type questions.</p>
                     
                     <div style="margin: 16px 0 0 12px;">
                         {answers}
@@ -42,3 +68,6 @@ def genDailyAnswerBlock(question: str, answer: str) -> str:
 
 def genDailyAnswers(name: str, answers: str) -> str:
     return daily_answers.format(subject=SUBJECT_NAME, name=name, answers=answers, twitter_handle=SUBJECT_TWITTER)
+
+def genPasswordResetEmail(password: str) -> str:
+    return password_reset.format(subject=SUBJECT_NAME, password=password)

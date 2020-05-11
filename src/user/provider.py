@@ -1,13 +1,15 @@
 from src.user.models import User
 from src.constants import USERS_KEY
-from src.utils import randomInt
+from src.utils import randomInt, randomAlphanumericStr
 from src.jwt.encode_decode import encodeJWT
 from src.response_models import Response
 from src.user.response_models import LoginResponse
-from src.user.request_models import SignupLoginUser as UserReq, ChangePassword
+from src.user.request_models import SignupLoginUser as UserReq, ChangePassword, ResetPassword
 from src.user.models import TokenPayload
 from typing import List, Union
 from datetime import date, timedelta
+from src.email_templates import genPasswordResetEmail
+from src.email import sendMail, createMail
 import src.db as db
 import time
 import bcrypt
@@ -75,6 +77,37 @@ def changePassword(id: int, req: ChangePassword) -> Union[Response[bool], Respon
                 db.set(USERS_KEY, users)
 
                 response = Response[bool](data = True, code = 200, message="User password changed succesfully")
+            else:
+                response = Response(data = None, code = 404, message="User not found")  
+    else:
+        response = Response(data = None, code = 404, message="User not found")
+    
+    return response
+
+def resetPassword(req: ResetPassword) -> Union[Response[bool], Response]:
+    users: List[dict] = db.get(USERS_KEY)
+    response: Union[Response[bool], Response]
+    
+    if users:
+        user_index: int = None
+
+        for i in range(len(users)):
+            if req.email == users[i]["email"]:
+                user_index = i
+        else:
+            if user_index is not None:
+                user = users[user_index]
+                new_password = randomAlphanumericStr(6)
+                user["password"] = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
+                
+                del users[user_index]
+                
+                users.insert(user_index, user)
+                db.set(USERS_KEY, users)
+                
+                sendMail(createMail(req.email, "Your password has been reset", genPasswordResetEmail(new_password)))
+
+                response = Response[bool](data = True, code = 200, message="Password reset succesfully. New auto-generated password sent to email.")
             else:
                 response = Response(data = None, code = 404, message="User not found")  
     else:

@@ -1,9 +1,13 @@
 import random
+import string
 from src.response_models import Response
 from typing import List
 
 def randomInt() -> int:
     return random.randint(1000, 9999)
+
+def randomAlphanumericStr(length: int) -> str:
+    return "".join(random.choice(f"{string.digits}{string.ascii_letters}") for i in range(length))
 
 def generate404ResContent(resource: str) -> dict:
     res = { 
