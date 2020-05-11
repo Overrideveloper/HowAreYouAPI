@@ -11,8 +11,15 @@ class SignupLoginUser(BaseModel):
                 "password": "maryispoppinagain"
             }
         }
-
-class TokenPayload(BaseModel):
-    randomizer: int
-    user: str
-    expires: float
+    
+class ChangePassword(BaseModel):
+    old_password: str = Field(..., min_length=6)
+    new_password: str = Field(..., min_length=6)
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "old_password": "maryispoppinagain",
+                "new_password": "maryisnotpoppinagain"
+            }
+        }
