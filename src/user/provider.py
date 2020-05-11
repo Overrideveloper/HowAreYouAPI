@@ -9,16 +9,18 @@ from src.user.models import TokenPayload
 from typing import List, Union
 from datetime import date, timedelta
 from src.email_templates import genPasswordResetEmail
-from src.email import sendMail, createMail
+from src.email import EmailHelper
 from src.db import IDatabase
 import time
 import bcrypt
 
 class UserProvider():
     db: IDatabase = None
+    emailHelper: EmailHelper = None
     
     def __init__(self, db: IDatabase):
         self.db = db
+        self.emailHelper = EmailHelper()
 
     def signup(self, req: UserReq) -> Union[Response[LoginResponse], Response]:
         users: List[dict] = self.db.get(USERS_KEY) or []
@@ -111,7 +113,7 @@ class UserProvider():
                     users.insert(user_index, user)
                     self.db.set(USERS_KEY, users)
                     
-                    sendMail(createMail(req.email, "Your password has been reset", genPasswordResetEmail(new_password)))
+                    self.emailHelper.sendMail(self.emailHelper.createMail(req.email, "Your password has been reset", genPasswordResetEmail(new_password)))
 
                     response = Response[bool](data = True, code = 200, message="Password reset succesfully. New auto-generated password sent to email.")
                 else:

@@ -5,7 +5,7 @@ from typing import List, Union
 from src.utils import randomInt
 from src.response_models import Response
 from src.db import IDatabase
-from src.abstract_provider import IProvider
+from src.abstract_defs import IProvider
 
 class QuestionProvider(IProvider[Question]):
     db: IDatabase = None

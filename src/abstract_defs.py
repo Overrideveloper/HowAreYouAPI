@@ -1,6 +1,7 @@
 import abc
 from typing import TypeVar, Generic, List, Union, Any
 from src.response_models import Response
+from sendgrid.helpers.mail import Mail
 
 T = TypeVar('T')
 
@@ -25,5 +26,12 @@ class IProvider(Generic[T], abc.ABC):
     def delete(self, id: int) -> Response:
         pass
     
+class IEmailHelper(abc.ABC):
+    @abc.abstractmethod
+    def createMail(self, recipient: str, subject: str, content: str, html: bool = True) -> Union[Mail, Any]:
+        pass
     
+    @abc.abstractmethod
+    def sendMail(self, mail: Union[Mail, Any]):
+        pass
         
