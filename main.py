@@ -37,7 +37,8 @@ def index():
     return { "description": "HowAreYou Service API" }
 
 
-@app.get('/api/log/today', tags=["Email Log"], summary="Get Today's Email Log", description="Get email log information for today.", response_model=Response[EmailLog])
+@app.get('/api/log/today', tags=["Email Log"], summary="Get Today's Email Log", description="Get email log information for today.", response_model=Response[EmailLog],
+dependencies=[Depends(jwt_bearer)])
 def getTodaysEmailLog():
     return logProvider.getTodaysLog()
 
