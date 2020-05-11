@@ -1,16 +1,15 @@
-import src.email as email_sender
-
 from src.response_models import Response
-from src.question.models import Question
-from src.answer.models import Answer
-from src.address.models import Address
+from src.modules.question.models import Question
+from src.modules.answer.models import Answer
+from src.modules.address.models import Address
 from src.constants import SUBJECT_NAME
-from src.email_templates import genDailyAnswerBlock, genDailyAnswers
+from src.email.email_templates import genDailyAnswerBlock, genDailyAnswers
 from src.db import Database
-from src.address.provider import AddressProvider
-from src.email_log.provider import EmailLogProvider
-from src.question.provider import QuestionProvider
-from src.answer.provider import AnswerProvider
+from src.modules.address.provider import AddressProvider
+from src.modules.email_log.provider import EmailLogProvider
+from src.modules.question.provider import QuestionProvider
+from src.modules.answer.provider import AnswerProvider
+from src.email.email_helper import EmailHelper
 
 from typing import List, Union
 
@@ -18,7 +17,7 @@ questionProvider = QuestionProvider(Database())
 logProvider = EmailLogProvider(Database())
 addressProvider = AddressProvider(Database())
 answerProvider = AnswerProvider(Database())
-
+emailHelper = EmailHelper()
 
 def SEND_EMAIL_TO_ADDRESSES():
     questionRes: Response[List[Question]] = questionProvider.getAll()
@@ -44,7 +43,7 @@ def SEND_EMAIL_TO_ADDRESSES():
             successCount = 0
 
             for address in addresses:
-                res = email_sender.sendMail(email_sender.createMail(address.email, f"How {SUBJECT_NAME} is doing today", genDailyAnswers(address.name, answers)))
+                res = emailHelper.sendMail(emailHelper.createMail(address.email, f"How {SUBJECT_NAME} is doing today", genDailyAnswers(address.name, answers)))
                 
                 successCount += 1 if res else 0
             else:

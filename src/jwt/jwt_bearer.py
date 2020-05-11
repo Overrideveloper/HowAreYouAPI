@@ -1,6 +1,6 @@
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import Request, HTTPException
-from src.user.models import TokenPayload
+from src.modules.user.models import TokenPayload
 from src.jwt.encode_decode import decodeJWT
 from datetime import date
 from src.constants import USERS_KEY

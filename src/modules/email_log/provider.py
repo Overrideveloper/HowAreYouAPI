@@ -1,10 +1,10 @@
-from src.email_log.models import EmailLog
+from src.modules.email_log.models import EmailLog
 from src.constants import EMAIL_LOG_KEY
 from typing import List
 from src.utils import randomInt
 from datetime import date as _date
 from src.response_models import Response
-from src.email_log.models import EmailLog
+from src.modules.email_log.models import EmailLog
 from src.db import IDatabase
 
 class EmailLogProvider():

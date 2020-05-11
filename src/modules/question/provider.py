@@ -1,5 +1,5 @@
-from src.question.models import Question
-from src.question.request_models import AddEditQuestion as ReqQuestion
+from src.modules.question.models import Question
+from src.modules.question.request_models import AddEditQuestion as ReqQuestion
 from src.constants import QUESTIONS_KEY
 from typing import List, Union
 from src.utils import randomInt

@@ -1,9 +1,9 @@
-from src.address.models import Address
+from src.modules.address.models import Address
 from src.constants import ADDRESS_KEY
 from typing import List, Union
 from src.utils import randomInt
 from src.response_models import Response
-from src.address.request_models import AddEditAddress as ReqAddress
+from src.modules.address.request_models import AddEditAddress as ReqAddress
 from src.db import IDatabase
 from src.abstract_defs import IProvider
 

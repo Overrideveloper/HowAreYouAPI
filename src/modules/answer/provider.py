@@ -1,6 +1,6 @@
-from src.answer.models import Answer
-from src.answer.request_models import AddEditAnswer as ReqAnswer
-from src.question.models import Question
+from src.modules.answer.models import Answer
+from src.modules.answer.request_models import AddEditAnswer as ReqAnswer
+from src.modules.question.models import Question
 from src.constants import ANSWERS_KEY, QUESTIONS_KEY
 from src.utils import randomInt
 from src.response_models import Response

@@ -1,5 +1,5 @@
 from crontabs import Cron, Tab
-import src.jobs as jobs
+import src.scheduler.jobs as jobs
     
 def schedule():
     Cron().schedule(
