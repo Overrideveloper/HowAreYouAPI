@@ -10,12 +10,13 @@ from src.jwt.jwt_bearer import JWTBearer
 from src.cron import schedule
 from src.response_models import Response
 from src.email_log.models import EmailLog
+from src.db import Database
+from src.email_log.provider import EmailLogProvider
 from typing import Dict
-
-import src.email_log.provider as logProvider
 
 app = FastAPI()
 jwt_bearer = JWTBearer()
+emailLogProvider = EmailLogProvider(Database())
 
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'], allow_credentials=True)
 
@@ -40,7 +41,7 @@ def index():
 @app.get('/api/log/today', tags=["Email Log"], summary="Get Today's Email Log", description="Get email log information for today.", response_model=Response[EmailLog],
 dependencies=[Depends(jwt_bearer)])
 def getTodaysEmailLog():
-    return logProvider.getTodaysLog()
+    return emailLogProvider.getTodaysLog()
 
 app.include_router(answer, prefix="/api/answer", tags=["Answer"], dependencies=[Depends(jwt_bearer)])
 app.include_router(question, prefix="/api/question", tags=["Question"], dependencies=[Depends(jwt_bearer)])

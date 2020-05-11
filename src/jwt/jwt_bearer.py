@@ -5,8 +5,10 @@ from src.jwt.encode_decode import decodeJWT
 from datetime import date
 from src.constants import USERS_KEY
 from typing import List
-import src.db as db
+from src.db import Database
 import time
+
+db = Database()
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):

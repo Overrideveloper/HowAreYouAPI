@@ -1,22 +1,29 @@
-import src.question.provider as questionProvider
-import src.address.provider as addressProvider
-import src.answer.provider as answerProvider
 import src.email as email_sender
 
 from src.response_models import Response
-from typing import List, Union
 from src.question.models import Question
 from src.answer.models import Answer
 from src.address.models import Address
-
 from src.constants import SUBJECT_NAME
 from src.email_templates import genDailyAnswerBlock, genDailyAnswers
-import src.email_log.provider as logProvider
+from src.db import Database
+from src.address.provider import AddressProvider
+from src.email_log.provider import EmailLogProvider
+from src.question.provider import QuestionProvider
+from src.answer.provider import AnswerProvider
+
+from typing import List, Union
+
+questionProvider = QuestionProvider(Database())
+logProvider = EmailLogProvider(Database())
+addressProvider = AddressProvider(Database())
+answerProvider = AnswerProvider(Database())
+
 
 def SEND_EMAIL_TO_ADDRESSES():
-    questionRes: Response[List[Question]] = questionProvider.getQuestions()
-    addressRes: Response[List[Address]] = addressProvider.getAddresses()
-    answerRes: Response[List[Answer]] = answerProvider.getAnswers()
+    questionRes: Response[List[Question]] = questionProvider.getAll()
+    addressRes: Response[List[Address]] = addressProvider.getAll()
+    answerRes: Response[List[Answer]] = answerProvider.getAll()
 
     if questionRes.code == 200 and addressRes.code == 200 and answerRes.code == 200:
         questions: List[Question] = questionRes.data
@@ -44,4 +51,4 @@ def SEND_EMAIL_TO_ADDRESSES():
                 logProvider.addTodayLog(successCount)
 
 def RESET_ANSWERS():
-    answerProvider.deleteAllAnswers()
+    answerProvider.deleteAll()
