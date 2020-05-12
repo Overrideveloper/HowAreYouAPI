@@ -143,14 +143,13 @@ class TestAddressProvider:
         payload = AddEditAddress(name = "Bilbo Baggins", email = "bilbo@lotr.com")
         
         res = self.addressProvider.edit(1, payload)
-        res1 = self.addressProvider.getAll()
+        res1 = self.addressProvider.get(1)
         
         assert isinstance(res, Response)
         assert res.code == 200
         assert res.data == Address(id = 1, **payload.dict()).dict()
 
         assert res1.code == 200
-        assert len(res1.data) == len(self.address_list)
-        assert res1.data[0] == res.data
+        assert res1.data == Address(id = 1, **payload.dict())
         
     
