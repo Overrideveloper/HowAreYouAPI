@@ -6,10 +6,6 @@ from tests.unit.mocks.db_mock import DatabaseMock
 from tests.unit.mocks.email_helper_mock import EmailHelperMock
 from src.constants import USERS_KEY
 
-import logging
-
-logging.basicConfig(level=logging.CRITICAL)
-
 class TestJWTUtils:
     baseDict = { "animal": "fox", "color": "brown", "speed": "quick" }
     dbMock = DatabaseMock()
