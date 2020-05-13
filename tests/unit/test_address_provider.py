@@ -18,14 +18,14 @@ class TestAddressProvider:
     
     def test_creation(self):
         assert self.addressProvider is not None
-    
+
     def test_get_all_empty(self):
         res = self.addressProvider.getAll()
         
         assert isinstance(res, Response[List[Address]])
         assert res.code == 200
         assert len(res.data) == 0
-        
+
     def test_get_all_non_empty(self):
         self.dbMock.set(ADDRESS_KEY, deepcopy(self.address_list))
 
@@ -33,10 +33,10 @@ class TestAddressProvider:
         
         assert isinstance(res, Response[List[Address]])
         assert res.code == 200
-        assert len(res.data) == 2
+        assert len(res.data) == len(self.address_list)
         
         self.dbMock.remove(ADDRESS_KEY)
-        
+
     def test_get_200(self):
         self.dbMock.set(ADDRESS_KEY, deepcopy(self.address_list))
 
@@ -48,7 +48,7 @@ class TestAddressProvider:
         assert res.data.dict() == self.address_list[0]
         
         self.dbMock.remove(ADDRESS_KEY)
-        
+
     def test_get_404(self):
         self.dbMock.set(ADDRESS_KEY, deepcopy(self.address_list))
 
@@ -59,7 +59,7 @@ class TestAddressProvider:
         assert not res.data
         
         self.dbMock.remove(ADDRESS_KEY)
-            
+
     def test_add_400(self):
         self.dbMock.set(ADDRESS_KEY, deepcopy(self.address_list))
 
@@ -72,7 +72,7 @@ class TestAddressProvider:
         assert not res.data
         
         self.dbMock.remove(ADDRESS_KEY)
-    
+
     def test_add_201(self):
         self.dbMock.set(ADDRESS_KEY, deepcopy(self.address_list))
 

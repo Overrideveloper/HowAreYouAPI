@@ -39,7 +39,7 @@ class TestAnswerProvider():
         
         assert isinstance(res, Response[List[Answer]])
         assert res.code == 200
-        assert len(res.data) == 2
+        assert len(res.data) == len(self.answer_list)
         
         self.dbMock.remove(ANSWERS_KEY)
         
@@ -79,6 +79,7 @@ class TestAnswerProvider():
         assert not res.data
         
         self.dbMock.remove(ANSWERS_KEY)
+        self.dbMock.remove(QUESTIONS_KEY)
     
     def test_add_403(self):
         self.dbMock.set(ANSWERS_KEY, deepcopy(self.answer_list))
@@ -93,6 +94,7 @@ class TestAnswerProvider():
         assert not res.data
         
         self.dbMock.remove(ANSWERS_KEY)
+        self.dbMock.remove(QUESTIONS_KEY)
     
     def test_add_201(self):
         self.dbMock.set(ANSWERS_KEY, deepcopy(self.answer_list))
@@ -106,8 +108,9 @@ class TestAnswerProvider():
         assert res.code == 201
         assert isinstance(res.data, Answer)
         assert res.data == Answer(id = res.data.id, **payload.dict()).dict()
-        
+
         self.dbMock.remove(ANSWERS_KEY)
+        self.dbMock.remove(QUESTIONS_KEY)
 
     def test_delete_404(self):
         self.dbMock.set(ANSWERS_KEY, deepcopy(self.answer_list))
@@ -161,6 +164,7 @@ class TestAnswerProvider():
         assert not res.data
         
         self.dbMock.remove(ANSWERS_KEY)
+        self.dbMock.remove(QUESTIONS_KEY)
         
     def test_edit_200(self):
         self.dbMock.set(ANSWERS_KEY, deepcopy(self.answer_list))
@@ -177,4 +181,7 @@ class TestAnswerProvider():
 
         assert res1.code == 200
         assert res1.data == Answer(id = 1, **payload.dict())
+        
+        self.dbMock.remove(ANSWERS_KEY)
+        self.dbMock.remove(QUESTIONS_KEY)
  

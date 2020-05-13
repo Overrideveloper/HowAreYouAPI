@@ -41,7 +41,7 @@ class QuestionProvider(IProvider[Question]):
         questions.append(question.dict())
         self.db.set(QUESTIONS_KEY, questions)
 
-        return Response[Question](data = question, code = 200, message = "Question saved")
+        return Response[Question](data = question, code = 201, message = "Question saved")
 
     def delete(self, id: int) -> Response:
         questions: List[dict] = self.db.get(QUESTIONS_KEY) or []
