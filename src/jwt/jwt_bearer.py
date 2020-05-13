@@ -5,14 +5,14 @@ from src.jwt.encode_decode import decodeJWT
 from datetime import date
 from src.constants import USERS_KEY
 from typing import List
-from src.db import Database
+from src.abstract_defs import IDatabase
 import time
 
-db = Database()
-
 class JWTBearer(HTTPBearer):
-    def __init__(self, auto_error: bool = True):
+    db: IDatabase = None
+    def __init__(self, db: IDatabase, auto_error: bool = True):
         super().__init__(auto_error=auto_error)
+        self.db = db
     
     async def __call__(self, request: Request):
         credentials: HTTPAuthorizationCredentials = await super().__call__(request)
@@ -41,7 +41,7 @@ class JWTBearer(HTTPBearer):
             if time.mktime(date.today().timetuple()) > payload.expires:
                 pass
             else:
-                users: List[dict] = db.get(USERS_KEY) or []
+                users: List[dict] = self.db.get(USERS_KEY) or []
                 user: dict = None
                 
                 for _user in users:

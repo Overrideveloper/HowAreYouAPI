@@ -15,7 +15,7 @@ from src.modules.email_log.provider import EmailLogProvider
 from typing import Dict
 
 app = FastAPI()
-jwt_bearer = JWTBearer()
+jwt_bearer = JWTBearer(Database())
 emailLogProvider = EmailLogProvider(Database())
 
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'], allow_credentials=True)

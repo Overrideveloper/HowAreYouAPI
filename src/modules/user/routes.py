@@ -11,7 +11,7 @@ from src.modules.user.provider import UserProvider
 from src.email.email_helper import EmailHelper
 
 userRouter = APIRouter()
-jwt_bearer = JWTBearer()
+jwt_bearer = JWTBearer(Database())
 userProvider = UserProvider(Database(), EmailHelper())
 
 @userRouter.get('/status', summary="Get System User Status", description="Check if a system user exists or not. This is a one-user system.", response_model=Response[bool])
