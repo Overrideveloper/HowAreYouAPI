@@ -3,7 +3,7 @@ from src.modules.address.provider import AddressProvider
 from src.response_models import Response
 from src.modules.address.models import Address
 from typing import List
-from src.db import IDatabase
+from src.abstract_defs import IDatabase
 from src.constants import ADDRESS_KEY
 from src.modules.address.request_models import AddEditAddress
 from copy import deepcopy

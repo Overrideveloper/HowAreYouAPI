@@ -3,7 +3,7 @@ from src.modules.question.provider import QuestionProvider
 from src.response_models import Response
 from src.modules.question.models import Question
 from typing import List
-from src.db import IDatabase
+from src.abstract_defs import IDatabase
 from src.constants import QUESTIONS_KEY
 from src.modules.question.request_models import AddEditQuestion
 from copy import deepcopy

@@ -1,4 +1,4 @@
-from src.db import IDatabase
+from src.abstract_defs import IDatabase
 from tests.unit.mocks.db_mock import DatabaseMock
 from src.modules.email_log.provider import EmailLogProvider
 from src.modules.email_log.models import EmailLog

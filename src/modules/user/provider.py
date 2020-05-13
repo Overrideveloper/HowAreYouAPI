@@ -10,17 +10,17 @@ from typing import List, Union
 from datetime import date, timedelta
 from src.email.email_templates import genPasswordResetEmail
 from src.email.email_helper import EmailHelper
-from src.db import IDatabase
+from src.abstract_defs import IDatabase, IEmailHelper
 import time
 import bcrypt
 
 class UserProvider():
     db: IDatabase = None
-    emailHelper: EmailHelper = None
+    emailHelper: IEmailHelper = None
     
-    def __init__(self, db: IDatabase):
+    def __init__(self, db: IDatabase, emailHelper: IEmailHelper):
         self.db = db
-        self.emailHelper = EmailHelper()
+        self.emailHelper = emailHelper
 
     def signup(self, req: UserReq) -> Union[Response[LoginResponse], Response]:
         users: List[dict] = self.db.get(USERS_KEY) or []
@@ -29,7 +29,7 @@ class UserProvider():
         if users:
             response = Response(data = None, code = 403, message="This is a one-user system and a user already exists.")
         else:
-            user = User(id=randomInt(), email=req.email, password=bcrypt.hashpw(req.password.encode(), bcrypt.gensalt()))
+            user = User(id=randomInt(), email=req.email, password=bcrypt.hashpw(req.password.encode(), bcrypt.gensalt()).decode())
 
             users.append(user.dict())
             self.db.set(USERS_KEY, users)

@@ -1,20 +1,7 @@
 import redis, json, abc
 from typing import Any
 from src.constants import REDIS
-
-class IDatabase(abc.ABC):
-    @abc.abstractmethod
-    def get(self, key: str) -> Any:
-        pass
-    
-    @abc.abstractmethod
-    def set(self, key: str, data: Any):
-        pass
-    
-    @abc.abstractmethod
-    def remove(self, key: str):
-        pass
-
+from src.abstract_defs import IDatabase
 
 class Database(IDatabase):
     db: redis.Redis = None

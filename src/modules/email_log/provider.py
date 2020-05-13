@@ -5,7 +5,7 @@ from src.utils import randomInt
 from datetime import date as _date
 from src.response_models import Response
 from src.modules.email_log.models import EmailLog
-from src.db import IDatabase
+from src.abstract_defs import IDatabase
 
 class EmailLogProvider():
     db: IDatabase = None

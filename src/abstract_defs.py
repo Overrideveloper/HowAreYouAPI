@@ -5,6 +5,19 @@ from sendgrid.helpers.mail import Mail
 
 T = TypeVar('T')
 
+class IDatabase(abc.ABC):
+    @abc.abstractmethod
+    def get(self, key: str) -> Any:
+        pass
+    
+    @abc.abstractmethod
+    def set(self, key: str, data: Any):
+        pass
+    
+    @abc.abstractmethod
+    def remove(self, key: str):
+        pass
+
 class IProvider(Generic[T], abc.ABC):
     @abc.abstractmethod
     def getAll(self) -> Response[List[T]]:
@@ -32,6 +45,6 @@ class IEmailHelper(abc.ABC):
         pass
     
     @abc.abstractmethod
-    def sendMail(self, mail: Union[Mail, Any]):
+    def sendMail(self, mail: Union[Mail, Any]) -> bool:
         pass
         
