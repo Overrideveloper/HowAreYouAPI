@@ -15,11 +15,6 @@ class Test1_AuthEndpoints:
         assert res.status_code == 200
         assert res.json() == Response[bool](data = False, code = 200, message="System user does not exist").dict()
 
-    def test_signup_missing_paylod(self):
-        res = self.client.post(f"{URL_FRAGMENT}/signup")
-        
-        assert res.status_code == 400
-        
     def test_signup_success(self):
         res = self.client.post(f"{URL_FRAGMENT}/signup", json={ "email": "johndoe@doe.com", "password": "johndoe" })
         
@@ -40,11 +35,6 @@ class Test1_AuthEndpoints:
         assert res.status_code == 403
         assert res.json() == Response(data = None, code = 403, message="This is a one-user system and a user already exists.").dict()
 
-    def test_login_missing_payload(self):
-        res = self.client.post(f"{URL_FRAGMENT}/login")
-        
-        assert res.status_code == 400
-            
     def test_login_user_not_found(self):
         res = self.client.post(f"{URL_FRAGMENT}/login", json={ "email": "mary@poppins.com", "password": "marypoppins" })
         
@@ -69,14 +59,6 @@ class Test1_AuthEndpoints:
         assert res.status_code == 403
         assert res.json() == Response(data = None, code = 403, message = "Not authenticated").dict()
 
-    def test_change_password_missing_payload(self):
-        user_id = int(os.environ.get("TEST_USER_ID"))
-        token = os.environ.get("TEST_TOKEN")
-
-        res = self.client.put(f"{URL_FRAGMENT}/change-password/{user_id}", headers={"Authorization": f"Bearer {token}"})
-
-        assert res.status_code == 400
-
     def test_change_password_user_not_found(self):
         user_id = int(os.environ.get("TEST_USER_ID"))
         token = os.environ.get("TEST_TOKEN")
@@ -96,12 +78,7 @@ class Test1_AuthEndpoints:
 
         assert res.status_code == 200
         assert res.json() == Response[bool](data = True, code = 200, message = "User password changed succesfully").dict()
-    
-    def test_reset_password_missing_payload(self):
-        res = self.client.post(f"{URL_FRAGMENT}/reset-password")
-
-        assert res.status_code == 400
-        
+  
     def test_reset_password_user_not_found(self):
         res = self.client.post(f"{URL_FRAGMENT}/reset-password", json={ "email": "mary@poppins.com" })
         

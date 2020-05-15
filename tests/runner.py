@@ -1,4 +1,4 @@
-import pytest
+import pytest, os
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -17,6 +17,11 @@ def teardown():
     db.remove(EMAIL_LOG_KEY)
     db.remove(QUESTIONS_KEY)
     db.remove(USERS_KEY)
+    
+    os.environ.pop("TEST_USER_ID")
+    os.environ.pop("TEST_TOKEN")
+    os.environ.pop("TEST_ADDRESS_ID")
+    os.environ.pop("TEST_QUESTION_ID")
 
 if __name__ == "__main__":
     setup()

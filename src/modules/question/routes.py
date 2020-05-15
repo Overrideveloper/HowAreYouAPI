@@ -11,7 +11,7 @@ from src.modules.question.provider import QuestionProvider
 questionRouter = APIRouter()
 questionProvider = QuestionProvider(Database())
 
-@questionRouter.get('/', summary="Get Questions", description="Get a list of all questions", response_model=Response[List[Question]])
+@questionRouter.get('', summary="Get Questions", description="Get a list of all questions", response_model=Response[List[Question]])
 def getQuestions():
     data: Response[List[Question]] = questionProvider.getAll()
 
@@ -24,7 +24,7 @@ def getQuestion(id: int = Path(..., gt=0, description="The ID of the question to
 
     return JSONResponse(content = data.dict(), status_code = data.code)
 
-@questionRouter.post('/', summary="Add Question", description="Create and save a question", response_model=Response[Question],
+@questionRouter.post('', summary="Add Question", description="Create and save a question", response_model=Response[Question],
 responses={ 400: generate400ResContent(), 422: {} })
 def addQuestion(payload: ReqQuestion = Body(..., description="The question to create")):
     data: Union[Response[Question], Response] = questionProvider.add(payload)

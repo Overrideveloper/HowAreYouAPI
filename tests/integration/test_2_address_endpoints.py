@@ -1,9 +1,8 @@
 from fastapi.testclient import TestClient
 from src.server import app
 from src.response_models import Response
-import src.modules.address as AddressModule
+from src.modules.address.models import Address
 import os
-import logging
 
 URL_FRAGMENT = "/api/address"
 
@@ -23,13 +22,7 @@ class Test2_AddressEndpoints:
 
         assert res.status_code == 404
         assert res.json() == Response(data = None, code = 404, message = "Address not found").dict()
-        
-    def test_create_address_missing_payload(self):
-        token = os.environ.get("TEST_TOKEN")
-        res = self.client.post(URL_FRAGMENT, headers={"Authorization": f"Bearer {token}"})
-
-        assert res.status_code == 400
-        
+     
     def test_create_address_successful(self):
         token = os.environ.get("TEST_TOKEN")
         res = self.client.post(URL_FRAGMENT, json={ "name": "Mary Poppins", "email": "mary@poppins.com"}, headers={"Authorization": f"Bearer {token}"})
@@ -90,7 +83,7 @@ class Test2_AddressEndpoints:
     def test_edit_address_successful(self):
         token = os.environ.get("TEST_TOKEN")
         address_id = int(os.environ.get("TEST_ADDRESS_ID"))
-        address = AddressModule.models.Address(id = address_id, name = "Mary Popular", email = "mary@popculture.com")
+        address = Address(id = address_id, name = "Mary Popular", email = "mary@popculture.com")
 
         res = self.client.put(f"{URL_FRAGMENT}/{address_id}", json={ "name": address.name, "email": address.email }, headers={"Authorization": f"Bearer {token}"})
         
@@ -98,14 +91,14 @@ class Test2_AddressEndpoints:
         assert res.status_code
         assert res.json() == Response(data = address, code = 200, message = "Address modified").dict()
         
-    def test_delete_not_found(self):
+    def test_delete_address_not_found(self):
         token = os.environ.get("TEST_TOKEN")
         res = self.client.delete(f"{URL_FRAGMENT}/2091", headers={"Authorization": f"Bearer {token}"})
         
         assert res.status_code
         assert res.json() == Response(data = None, code = 404, message = "Address not found").dict()
                 
-    def test_delete_successful(self):
+    def test_delete_address_successful(self):
         token = os.environ.get("TEST_TOKEN")
         address_id = int(os.environ.get("TEST_ADDRESS_ID"))
         res = self.client.delete(f"{URL_FRAGMENT}/{address_id}", headers={"Authorization": f"Bearer {token}"})
