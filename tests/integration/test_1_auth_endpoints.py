@@ -3,7 +3,6 @@ from src.server import app
 from src.response_models import Response
 import src.modules.user as UserModule
 import os
-import logging
 
 URL_FRAGMENT = "/api/auth"
 
@@ -64,23 +63,23 @@ class Test1_AuthEndpoints:
         os.environ["TEST_TOKEN"] = res.json()["data"]["token"]
     
     def test_change_password_unauthorized(self):
-        user_id = int(os.environ.get('TEST_USER_ID'))
+        user_id = int(os.environ.get("TEST_USER_ID"))
         res = self.client.put(f"{URL_FRAGMENT}/change-password/{user_id}", json={ "old_password": "johndoe", "new_password": "johndeux" })
         
         assert res.status_code == 403
         assert res.json() == Response(data = None, code = 403, message = "Not authenticated").dict()
 
     def test_change_password_missing_payload(self):
-        user_id = int(os.environ.get('TEST_USER_ID'))
-        token = os.environ.get('TEST_TOKEN')
+        user_id = int(os.environ.get("TEST_USER_ID"))
+        token = os.environ.get("TEST_TOKEN")
 
         res = self.client.put(f"{URL_FRAGMENT}/change-password/{user_id}", headers={"Authorization": f"Bearer {token}"})
 
         assert res.status_code == 400
 
     def test_change_password_user_not_found(self):
-        user_id = int(os.environ.get('TEST_USER_ID'))
-        token = os.environ.get('TEST_TOKEN')
+        user_id = int(os.environ.get("TEST_USER_ID"))
+        token = os.environ.get("TEST_TOKEN")
 
         res = self.client.put(f"{URL_FRAGMENT}/change-password/{user_id}", headers={"Authorization": f"Bearer {token}"},
                               json={ "old_password": "johndeux", "new_password": "johndoe" })
@@ -89,8 +88,8 @@ class Test1_AuthEndpoints:
         assert res.json() == Response(data = None, code = 404, message = "User not found").dict()    
     
     def test_change_password_successful(self):
-        user_id = int(os.environ.get('TEST_USER_ID'))
-        token = os.environ.get('TEST_TOKEN')
+        user_id = int(os.environ.get("TEST_USER_ID"))
+        token = os.environ.get("TEST_TOKEN")
 
         res = self.client.put(f"{URL_FRAGMENT}/change-password/{user_id}", headers={"Authorization": f"Bearer {token}"},
                               json={ "old_password": "johndoe", "new_password": "johndeux" })
@@ -114,7 +113,3 @@ class Test1_AuthEndpoints:
         
         assert res.status_code == 200
         assert res.json() == Response[bool](data = True, code = 200, message="Password reset succesfully. New auto-generated password sent to email.").dict()
-
-        
-    
-        

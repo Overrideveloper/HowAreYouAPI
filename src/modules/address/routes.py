@@ -11,7 +11,7 @@ from src.modules.address.provider import AddressProvider
 addressRouter = APIRouter()
 addressProvider = AddressProvider(Database())
 
-@addressRouter.get('/', summary="Get Addresses", description="Get a list of all addresses", response_model=Response[List[Address]])
+@addressRouter.get('', summary="Get Addresses", description="Get a list of all addresses", response_model=Response[List[Address]])
 def getAddresses():
     data: Response[List[Address]] = addressProvider.getAll()
 
@@ -24,7 +24,7 @@ def getAddress(id: int = Path(..., gt=0, description="The ID of the address to g
 
     return JSONResponse(content = data.dict(), status_code = data.code)
 
-@addressRouter.post('/', summary="Add Address", description="Create and save an address", response_model=Response[Address],
+@addressRouter.post('', summary="Add Address", description="Create and save an address", response_model=Response[Address],
 responses={ 400: generate400ResContent(), 422: {} })
 def addAddress(payload: ReqAddress = Body(..., description="The address to create")):
     data: Union[Response[Address], Response] = addressProvider.add(payload)
