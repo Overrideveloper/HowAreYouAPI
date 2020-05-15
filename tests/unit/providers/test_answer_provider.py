@@ -6,7 +6,7 @@ from src.modules.question.models import Question
 from typing import List
 from src.abstract_defs import IDatabase
 from src.constants import ANSWERS_KEY, QUESTIONS_KEY
-from src.modules.answer.request_models import AddEditAnswer
+from src.modules.answer.request_models import AddAnswer, EditAnswer
 from copy import deepcopy
 
 class TestAnswerProvider():
@@ -70,7 +70,7 @@ class TestAnswerProvider():
         self.dbMock.set(ANSWERS_KEY, deepcopy(self.answer_list))
         self.dbMock.set(QUESTIONS_KEY, deepcopy(self.question_list))
 
-        payload = AddEditAnswer(question_id = 99, answer = "For sure")
+        payload = AddAnswer(question_id = 99, answer = "For sure")
         
         res = self.answerProvider.add(payload)
         
@@ -85,7 +85,7 @@ class TestAnswerProvider():
         self.dbMock.set(ANSWERS_KEY, deepcopy(self.answer_list))
         self.dbMock.set(QUESTIONS_KEY, deepcopy(self.question_list))
 
-        payload = AddEditAnswer(question_id = 1, answer = "For sure")
+        payload = AddAnswer(question_id = 1, answer = "For sure")
         
         res = self.answerProvider.add(payload)
         
@@ -100,7 +100,7 @@ class TestAnswerProvider():
         self.dbMock.set(ANSWERS_KEY, deepcopy(self.answer_list))
         self.dbMock.set(QUESTIONS_KEY, deepcopy(self.question_list))
 
-        payload = AddEditAnswer(question_id = 3, answer = "For sure")
+        payload = AddAnswer(question_id = 3, answer = "For sure")
         
         res = self.answerProvider.add(payload)
         
@@ -141,7 +141,7 @@ class TestAnswerProvider():
     def test_edit_404(self):
         self.dbMock.set(ANSWERS_KEY, deepcopy(self.answer_list))
         
-        payload = AddEditAnswer(answer = "No way", question_id = 1)
+        payload = EditAnswer(answer = "No way")
         
         res = self.answerProvider.edit(99, payload)
         
@@ -150,38 +150,23 @@ class TestAnswerProvider():
         assert not res.data
         
         self.dbMock.remove(ANSWERS_KEY)
-
-    def test_edit_404_1(self):
-        self.dbMock.set(ANSWERS_KEY, deepcopy(self.answer_list))
-        self.dbMock.set(QUESTIONS_KEY, deepcopy(self.question_list))
-        
-        payload = AddEditAnswer(answer = "No way", question_id = 99)
-        
-        res = self.answerProvider.edit(1, payload)
-        
-        assert isinstance(res, Response)
-        assert res.code == 404
-        assert not res.data
-        
-        self.dbMock.remove(ANSWERS_KEY)
-        self.dbMock.remove(QUESTIONS_KEY)
         
     def test_edit_200(self):
         self.dbMock.set(ANSWERS_KEY, deepcopy(self.answer_list))
-        self.dbMock.set(QUESTIONS_KEY, deepcopy(self.question_list))
         
-        payload = AddEditAnswer(answer = "No way", question_id = 1)
+        payload = EditAnswer(answer = "No way")
         
         res = self.answerProvider.edit(1, payload)
         res1 = self.answerProvider.get(1)
         
         assert isinstance(res, Response)
         assert res.code == 200
-        assert res.data == Answer(id = 1, **payload.dict()).dict()
+        assert res.data.id == 1
+        assert res.data.answer == payload.answer
 
         assert res1.code == 200
-        assert res1.data == Answer(id = 1, **payload.dict())
+        assert res1.data.id == 1
+        assert res1.data.answer == payload.answer
         
         self.dbMock.remove(ANSWERS_KEY)
-        self.dbMock.remove(QUESTIONS_KEY)
  

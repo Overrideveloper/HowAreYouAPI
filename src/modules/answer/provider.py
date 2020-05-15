@@ -1,5 +1,5 @@
 from src.modules.answer.models import Answer
-from src.modules.answer.request_models import AddEditAnswer as ReqAnswer
+from src.modules.answer.request_models import AddAnswer, EditAnswer
 from src.modules.question.models import Question
 from src.constants import ANSWERS_KEY, QUESTIONS_KEY
 from src.utils import randomInt
@@ -34,7 +34,7 @@ class AnswerProvider(IProvider[Answer]):
         
         return response
         
-    def add(self, req: ReqAnswer) -> Union[Response[Answer], Response]:
+    def add(self, req: AddAnswer) -> Union[Response[Answer], Response]:
         questions: List[dict] = self.db.get(QUESTIONS_KEY) or []
         response: Union[Response[Answer], Response] = None
         question: dict = None
@@ -84,39 +84,29 @@ class AnswerProvider(IProvider[Answer]):
         
         return response
 
-    def edit(self, id: int, req: ReqAnswer) -> Union[Response[Answer], Response]:
-        questions: List[dict] = self.db.get(QUESTIONS_KEY) or []
-        question: dict = None
+    def edit(self, id: int, req: EditAnswer) -> Union[Response[Answer], Response]:
         response: Union[Response[Answer], Response] = None
         
-        for ques in questions:
-            if ques["id"] == req.question_id:
-                question = ques
-        else:
-            if question:
-                answers: List[dict] = self.db.get(ANSWERS_KEY) or []
-                answer_index: int = None
-                
-                for i in range(len(answers)):
-                    if answers[i]["id"] == id:
-                        answer_index = i
-                else:
-                    if answer_index is not None:
-                        answer = answers[answer_index]
-                        answer["question_id"] = question["id"]
-                        answer["answer"] = req.answer
-                        
-                        del answers[answer_index]
-
-                        answers.insert(answer_index, answer)
-                        self.db.set(ANSWERS_KEY, answers)
-                        
-                        response = Response[Answer](data = Answer(**answer), code = 200, message = "Answer modified")
-                    else:
-                        response = Response(data = None, code = 404, message = "Answer not found")
-            else:
-                response = Response(data = None, code = 404, message = "Question not found")
+        answers: List[dict] = self.db.get(ANSWERS_KEY) or []
+        answer_index: int = None
         
+        for i in range(len(answers)):
+            if answers[i]["id"] == id:
+                answer_index = i
+        else:
+            if answer_index is not None:
+                answer = answers[answer_index]
+                answer["answer"] = req.answer
+                
+                del answers[answer_index]
+
+                answers.insert(answer_index, answer)
+                self.db.set(ANSWERS_KEY, answers)
+                
+                response = Response[Answer](data = Answer(**answer), code = 200, message = "Answer modified")
+            else:
+                response = Response(data = None, code = 404, message = "Answer not found")
+    
         return response
 
     def deleteAll(self):
