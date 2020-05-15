@@ -1,7 +1,6 @@
 from fastapi.testclient import TestClient
 from src.server import app
 from src.response_models import Response
-from src.modules.answer.models import Answer
 import os
 
 URL_FRAGMENT = "/api/answer"
