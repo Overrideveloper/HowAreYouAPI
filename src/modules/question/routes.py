@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Path, Body
 from fastapi.responses import JSONResponse
 from src.response_models import Response
-from src.modules.question.request_models import AddEditQuestion as ReqQuestion
-from src.modules.question.models import Question
+from .request_models import AddEditQuestion as ReqQuestion
+from .models import Question
+from .provider import QuestionProvider
 from typing import List, Union
 from src.utils import generate404ResContent, generate400ResContent
 from src.db import Database
-from src.modules.question.provider import QuestionProvider
 
 questionRouter = APIRouter()
 questionProvider = QuestionProvider(Database())

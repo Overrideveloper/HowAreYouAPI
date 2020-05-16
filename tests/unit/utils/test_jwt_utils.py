@@ -1,9 +1,6 @@
-from src.jwt.encode_decode import encodeJWT, decodeJWT
-from src.jwt.jwt_bearer import JWTBearer
-from src.modules.user.request_models import SignupLoginUser
-from src.modules.user.provider import UserProvider
-from tests.unit.mocks.db_mock import DatabaseMock
-from tests.unit.mocks.email_helper_mock import EmailHelperMock
+from src.jwt import encodeJWT, decodeJWT, JWTBearer
+from src.modules.user import SignupLoginUser, UserProvider
+from tests.unit.mocks import DatabaseMock, EmailHelperMock
 from src.constants import USERS_KEY
 
 class TestJWTUtils:

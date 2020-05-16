@@ -22,10 +22,12 @@ def teardown():
     os.environ.pop("TEST_TOKEN")
     os.environ.pop("TEST_ADDRESS_ID")
     os.environ.pop("TEST_QUESTION_ID")
+    os.environ.pop("TEST_QUESTION_ID_1")
+    os.environ.pop("TEST_ANSWER_ID")
 
 if __name__ == "__main__":
     setup()
 
-    pytest.main(['tests/integration'])
+    pytest.main(['tests'])
     
     teardown()

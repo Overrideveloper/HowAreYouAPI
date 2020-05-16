@@ -1,11 +1,9 @@
-from tests.unit.mocks.db_mock import DatabaseMock
-from src.modules.address.provider import AddressProvider
+from tests.unit.mocks import DatabaseMock
+from src.modules.address import AddressProvider, Address, AddEditAddress
 from src.response_models import Response
-from src.modules.address.models import Address
 from typing import List
 from src.abstract_defs import IDatabase
 from src.constants import ADDRESS_KEY
-from src.modules.address.request_models import AddEditAddress
 from copy import deepcopy
 
 class TestAddressProvider:

@@ -1,4 +1,4 @@
-from src.email.email_templates import genDailyAnswerBlock, genDailyAnswers, genPasswordResetEmail, daily_answer_block, daily_answers, password_reset
+from src.email import genDailyAnswerBlock, genDailyAnswers, genPasswordResetEmail, daily_answer_block, daily_answers, password_reset
 from src.constants import SUBJECT_TWITTER, SUBJECT_NAME
 
 class TestEmailTemplateGenerators:

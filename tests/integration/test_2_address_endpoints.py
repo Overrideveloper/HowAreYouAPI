@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
-from src.server import app
+from src import app
 from src.response_models import Response
-from src.modules.address.models import Address
+from src.modules.address import Address
 import os
 
 URL_FRAGMENT = "/api/address"

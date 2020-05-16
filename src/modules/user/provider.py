@@ -1,15 +1,13 @@
-from src.modules.user.models import User
 from src.constants import USERS_KEY
 from src.utils import randomInt, randomAlphanumericStr
-from src.jwt.encode_decode import encodeJWT
+from src.jwt import encodeJWT
 from src.response_models import Response
-from src.modules.user.response_models import LoginResponse
-from src.modules.user.request_models import SignupLoginUser as UserReq, ChangePassword, ResetPassword
-from src.modules.user.models import TokenPayload
+from .models import User, TokenPayload
+from .response_models import LoginResponse
+from .request_models import SignupLoginUser as UserReq, ChangePassword, ResetPassword
 from typing import List, Union
 from datetime import date, timedelta
-from src.email.email_templates import genPasswordResetEmail
-from src.email.email_helper import EmailHelper
+from src.email import genPasswordResetEmail, EmailHelper
 from src.abstract_defs import IDatabase, IEmailHelper
 import time
 import bcrypt

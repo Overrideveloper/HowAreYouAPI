@@ -1,13 +1,9 @@
-from tests.unit.mocks.db_mock import DatabaseMock
-from tests.unit.mocks.email_helper_mock import EmailHelperMock
-from src.modules.user.provider import UserProvider
+from tests.unit.mocks import DatabaseMock, EmailHelperMock
+from src.modules.user import UserProvider, User, TokenPayload, SignupLoginUser, ChangePassword, ResetPassword, LoginResponse
 from src.response_models import Response
-from src.modules.user.models import User, TokenPayload
 from typing import List
 from src.abstract_defs import IDatabase, IEmailHelper
 from src.constants import USERS_KEY
-from src.modules.user.request_models import SignupLoginUser, ChangePassword, ResetPassword
-from src.modules.user.response_models import LoginResponse
 from copy import deepcopy
 import bcrypt
 

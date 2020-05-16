@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Body, Path, Depends
 from fastapi.responses import JSONResponse
 from src.response_models import Response
-from src.modules.user.request_models import SignupLoginUser as User, ChangePassword, ResetPassword
-from src.modules.user.response_models import LoginResponse
 from src.utils import generate400ResContent, generate403ResContent, generate404ResContent
 from typing import Union
-from src.jwt.jwt_bearer import JWTBearer
+from src.jwt import JWTBearer
 from src.db import Database
-from src.modules.user.provider import UserProvider
-from src.email.email_helper import EmailHelper
+from .request_models import SignupLoginUser as User, ChangePassword, ResetPassword
+from .response_models import LoginResponse
+from .provider import UserProvider
+from src.email import EmailHelper
 
 userRouter = APIRouter()
 jwt_bearer = JWTBearer(Database())

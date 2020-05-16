@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Path, Body
 from fastapi.responses import JSONResponse
 from src.response_models import Response
-from src.modules.address.request_models import AddEditAddress as ReqAddress
-from src.modules.address.models import Address
+from .request_models import AddEditAddress as ReqAddress
+from .models import Address
+from .provider import AddressProvider
 from typing import List, Union
 from src.utils import generate404ResContent, generate400ResContent
 from src.db import Database
-from src.modules.address.provider import AddressProvider
 
 addressRouter = APIRouter()
 addressProvider = AddressProvider(Database())

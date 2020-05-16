@@ -1,15 +1,15 @@
 from src.response_models import Response
-from src.modules.question.models import Question
-from src.modules.answer.models import Answer
-from src.modules.address.models import Address
+from src.modules.question import Question
+from src.modules.answer import Answer
+from src.modules.address import Address
 from src.constants import SUBJECT_NAME
-from src.email.email_templates import genDailyAnswerBlock, genDailyAnswers
+from src.email import genDailyAnswerBlock, genDailyAnswers
 from src.db import Database
-from src.modules.address.provider import AddressProvider
-from src.modules.email_log.provider import EmailLogProvider
-from src.modules.question.provider import QuestionProvider
-from src.modules.answer.provider import AnswerProvider
-from src.email.email_helper import EmailHelper
+from src.modules.address import AddressProvider
+from src.modules.email_log import EmailLogProvider
+from src.modules.question import QuestionProvider
+from src.modules.answer import AnswerProvider
+from src.email import EmailHelper
 
 from typing import List, Union
 

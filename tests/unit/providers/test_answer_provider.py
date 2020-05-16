@@ -1,12 +1,10 @@
-from tests.unit.mocks.db_mock import DatabaseMock
-from src.modules.answer.provider import AnswerProvider
+from tests.unit.mocks import DatabaseMock
+from src.constants import ANSWERS_KEY, QUESTIONS_KEY
+from src.modules.answer import AnswerProvider, Answer, AddAnswer, EditAnswer
+from src.modules.question import Question
 from src.response_models import Response
-from src.modules.answer.models import Answer
-from src.modules.question.models import Question
 from typing import List
 from src.abstract_defs import IDatabase
-from src.constants import ANSWERS_KEY, QUESTIONS_KEY
-from src.modules.answer.request_models import AddAnswer, EditAnswer
 from copy import deepcopy
 
 class TestAnswerProvider():

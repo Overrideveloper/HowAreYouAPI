@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Path, Body
 from fastapi.responses import JSONResponse
 from src.response_models import Response
-from src.modules.answer.request_models import AddAnswer, EditAnswer
-from src.modules.answer.models import Answer
+from .request_models import AddAnswer, EditAnswer
+from .models import Answer
 from typing import List, Union
 from src.utils import generate404ResContent, generate400ResContent, generate403ResContent
 from src.db import Database

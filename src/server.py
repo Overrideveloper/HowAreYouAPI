@@ -1,17 +1,17 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from src.exceptions_handlers import validationExceptionHandler, httpExceptionHandler
-from src.modules.answer.routes import answerRouter
-from src.modules.question.routes import questionRouter
-from src.modules.address.routes import addressRouter
-from src.modules.user.routes import userRouter
-from src.jwt.jwt_bearer import JWTBearer
-from src.scheduler.cron import schedule
+from .exceptions_handlers import validationExceptionHandler, httpExceptionHandler
+from src.modules.answer import answerRouter
+from src.modules.question import questionRouter
+from src.modules.address import addressRouter
+from src.modules.user import userRouter
+from src.jwt import JWTBearer
+from src.scheduler import schedule
 from src.response_models import Response
-from src.modules.email_log.models import EmailLog
+from src.modules.email_log import EmailLog
+from src.modules.email_log import EmailLogProvider
 from src.db import Database
-from src.modules.email_log.provider import EmailLogProvider
 from typing import Dict
 
 app = FastAPI()

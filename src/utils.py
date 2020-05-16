@@ -1,6 +1,6 @@
 import random
 import string
-from src.response_models import Response
+from .response_models import Response
 from typing import List, Dict
 
 def randomInt() -> int:

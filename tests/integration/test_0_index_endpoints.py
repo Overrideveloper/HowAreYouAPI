@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from src.server import app
+from src import app
 
 class Test0_IndexEndpoints:
     client = TestClient(app)

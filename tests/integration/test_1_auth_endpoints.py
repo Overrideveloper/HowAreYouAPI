@@ -1,7 +1,6 @@
 from fastapi.testclient import TestClient
-from src.server import app
+from src import app
 from src.response_models import Response
-import src.modules.user as UserModule
 import os
 
 URL_FRAGMENT = "/api/auth"
