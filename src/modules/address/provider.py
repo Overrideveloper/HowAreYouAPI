@@ -1,6 +1,6 @@
 from .models import Address
 from src.constants import ADDRESS_KEY
-from typing import List, Union
+from typing import List, Union, Dict
 from src.utils import randomInt
 from src.response_models import Response
 from .request_models import AddEditAddress as ReqAddress
@@ -13,39 +13,36 @@ class AddressProvider(IProvider[Address]):
         self.db = db
     
     def getAll(self) -> Response[List[Address]]:
-        data: List[dict] = self.db.get(ADDRESS_KEY) or []
+        data: Dict[str, dict] = self.db.get(ADDRESS_KEY) or {}
+        addresses = [Address(**address) for address in data.values()]
         
-        return Response[List[Address]](data = data, code = 200, message = "{0} Address(es) returned".format(len(data)))
+        return Response[List[Address]](data = addresses, code = 200, message = "{0} Address(es) returned".format(len(addresses)))
     
     def get(self, id: int) -> Union[Response[Address], Response]:
-        addresses: List[dict] = self.db.get(ADDRESS_KEY) or []
+        addresses: Dict[str, dict] = self.db.get(ADDRESS_KEY) or {}
         response: Union[Response[Address], Response] = None
-        address: dict = None
+        address: dict = addresses.get(str(id))
         
-        for addr in addresses:
-            if addr["id"] == id:
-                address = addr
+        if address:
+            response = Response[Address](data = Address(**address), code = 200, message = "Address returned")
         else:
-            if address:
-                response = Response[Address](data = Address(**address), code = 200, message = "Address returned")
-            else:
-                response = Response(data = None, code = 404, message = "Address not found")
-        
+            response = Response(data = None, code = 404, message = "Address not found")
+
         return response
         
     def add(self, req: ReqAddress) -> Union[Response[Address], Response]:
-        addresses: List[dict] = self.db.get(ADDRESS_KEY) or []
+        addresses: Dict[str, dict] = self.db.get(ADDRESS_KEY) or {}
         response: Union[Response[Address], Response] = None
         email_exists: bool = None
 
-        for addr in addresses:
+        for addr in addresses.values():
             if addr["email"] == req.email:
                 email_exists = True
         else:
             if not email_exists:
                 address = Address(name = req.name, email = req.email, id = randomInt())
-                
-                addresses.append(address.dict())
+                addresses[str(address.id)] = address.dict()
+
                 self.db.set(ADDRESS_KEY, addresses)
 
                 response = Response[Address](data = address, code = 201, message = "Address saved")
@@ -55,52 +52,41 @@ class AddressProvider(IProvider[Address]):
         return response
 
     def delete(self, id: int) -> Response:
-        addresses: List[dict] = self.db.get(ADDRESS_KEY) or []
+        _id = str(id)
+        addresses: Dict[str, dict] = self.db.get(ADDRESS_KEY) or {}
         response: Response = None
-        address_index: int = None
         
-        for i in range(len(addresses)):
-            if addresses[i]["id"] == id:
-                address_index = i
-        else:
-            if address_index is not None: 
-                del addresses[address_index]
-                self.db.set(ADDRESS_KEY, addresses)
+        if addresses.get(_id): 
+            addresses.pop(_id)
+            self.db.set(ADDRESS_KEY, addresses)
 
-                response = Response(data = None, code = 200, message = "Address deleted")
-            else:
-                response = Response(data = None, code = 404, message = "Address not found")
+            response = Response(data = None, code = 200, message = "Address deleted")
+        else:
+            response = Response(data = None, code = 404, message = "Address not found")
         
         return response
 
     def edit(self, id: int, req: ReqAddress) -> Union[Response[Address], Response]:
-        addresses: List[dict] = self.db.get(ADDRESS_KEY) or []
+        _id = str(id)
+        addresses: Dict[str, dict] = self.db.get(ADDRESS_KEY) or {}
         response: Union[Response[Address], Response] = None
-        address_index: int = None
-        email_exists_index: int = None
+        email_exists: bool = False
         
-        for i in range(len(addresses)):
-            if addresses[i]["id"] == id:
-                address_index = i
+        if addresses.get(_id):
+            for addr in addresses.items():
+                if addr[0] != _id and addr[1]["email"] == req.email:
+                    email_exists = True
+            else:
+                if not email_exists:
+                    addresses[_id]["name"] = req.name
+                    addresses[_id]["email"] = req.email
 
-            if addresses[i]["email"] == req.email:
-                email_exists_index = i
-        else:
-            if address_index is not None:
-                if email_exists_index is None or (email_exists_index is not None and email_exists_index == address_index):
-                    address = addresses[address_index]
-                    address["name"] = req.name
-                    address["email"] = req.email
-                    
-                    del addresses[address_index]
-
-                    addresses.insert(address_index, address)
                     self.db.set(ADDRESS_KEY, addresses)
                             
-                    response = Response[Address](data = Address(**address), code = 200, message = "Address modified")
+                    response = Response[Address](data = Address(**addresses.get(_id)), code = 200, message = "Address modified")
                 else:
                     response = Response(data = None, code = 400, message = "Email already in use by another address")
-            else:
-                response = Response(data = None, code = 404, message = "Address not found")
+        else:
+            response = Response(data = None, code = 404, message = "Address not found")
             
         return response

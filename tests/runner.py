@@ -18,12 +18,7 @@ def teardown():
     db.remove(QUESTIONS_KEY)
     db.remove(USERS_KEY)
     
-    os.environ.pop("TEST_USER_ID")
-    os.environ.pop("TEST_TOKEN")
-    os.environ.pop("TEST_ADDRESS_ID")
-    os.environ.pop("TEST_QUESTION_ID")
-    os.environ.pop("TEST_QUESTION_ID_1")
-    os.environ.pop("TEST_ANSWER_ID")
+    os.environ.clear()
 
 if __name__ == "__main__":
     setup()

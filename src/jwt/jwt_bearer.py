@@ -4,7 +4,7 @@ from src.modules.user.models import TokenPayload
 from .encode_decode import decodeJWT
 from datetime import date
 from src.constants import USERS_KEY
-from typing import List
+from typing import Dict
 from src.abstract_defs import IDatabase
 import time
 
@@ -38,18 +38,13 @@ class JWTBearer(HTTPBearer):
             payload = None
 
         if payload:
-            if time.mktime(date.today().timetuple()) > payload.expires:
+            if time.mktime(date.today().timetuple()) >= payload.expires:
                 pass
             else:
-                users: List[dict] = self.db.get(USERS_KEY) or []
-                user: dict = None
-                
-                for _user in users:
-                    if _user["email"] == payload.user:
-                        user = _user
-                else:       
-                    if user:
-                        isTokenValid = True
+                users: Dict[str, dict] = self.db.get(USERS_KEY) or {}
+
+                if users.get(str(payload.user_id)):
+                    isTokenValid = True
         
         return isTokenValid
         

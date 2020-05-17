@@ -1,7 +1,7 @@
 from tests.unit.mocks import DatabaseMock, EmailHelperMock
-from src.modules.user import UserProvider, User, TokenPayload, SignupLoginUser, ChangePassword, ResetPassword, LoginResponse
+from src.modules.user import UserProvider, User, SignupLoginUser, ChangePassword, ResetPassword, LoginResponse
 from src.response_models import Response
-from typing import List
+from typing import Dict
 from src.abstract_defs import IDatabase, IEmailHelper
 from src.constants import USERS_KEY
 from copy import deepcopy
@@ -10,9 +10,9 @@ import bcrypt
 class TestUserProvider:
     dbMock: IDatabase = DatabaseMock()
     userProvider: UserProvider = UserProvider(dbMock, EmailHelperMock())
-    user_list: List[dict] = list([
-        User(id = 1, email = "john@doe.com", password = "$2b$12$wFw5u4uDUoFYjKBR04mFu.AOlbxK6oGeo7.UZZ7AP8Vix/IscmgR.").dict()
-    ])
+    user_list: Dict[str, dict] = {
+        "1": User(id = 1, email = "john@doe.com", password = "$2b$12$wFw5u4uDUoFYjKBR04mFu.AOlbxK6oGeo7.UZZ7AP8Vix/IscmgR.").dict()
+    }
     
     def test_creation(self):
         assert self.userProvider is not None

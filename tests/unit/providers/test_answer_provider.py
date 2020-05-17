@@ -3,22 +3,22 @@ from src.constants import ANSWERS_KEY, QUESTIONS_KEY
 from src.modules.answer import AnswerProvider, Answer, AddAnswer, EditAnswer
 from src.modules.question import Question
 from src.response_models import Response
-from typing import List
+from typing import List, Dict
 from src.abstract_defs import IDatabase
 from copy import deepcopy
 
 class TestAnswerProvider():
     dbMock: IDatabase = DatabaseMock()
     answerProvider: AnswerProvider = AnswerProvider(dbMock)
-    answer_list: List[dict] = list([
-        Answer(id = 1, answer = "Yes", question_id = 1).dict(),
-        Answer(id = 2, answer = "No", question_id = 2).dict(),
-    ])
-    question_list: List[dict] = list([
-        Question(id = 1, question = "Hello?", defaultAnswer = "Hi").dict(),
-        Question(id = 2, question = "How are you?", defaultAnswer = "Fine").dict(),
-        Question(id = 3, question = "How do you do?", defaultAnswer = "Well").dict()
-    ])
+    answer_list: Dict[str, dict] = {
+        "1": Answer(id = 1, answer = "Yes", question_id = 1).dict(),
+        "2": Answer(id = 2, answer = "No", question_id = 2).dict()
+    }
+    question_list: Dict[str, dict] = {
+        "1": Question(id = 1, question = "Hello?", defaultAnswer = "Hi").dict(),
+        "2": Question(id = 2, question = "How are you?", defaultAnswer = "Fine").dict(),
+        "3": Question(id = 3, question = "How do you do?", defaultAnswer = "Well").dict()
+    }
     
     def test_creation(self):
         assert self.answerProvider is not None
@@ -49,7 +49,7 @@ class TestAnswerProvider():
         assert isinstance(res, Response[Answer])
         assert res.code == 200
         assert isinstance(res.data, Answer)
-        assert res.data.dict() == self.answer_list[0]
+        assert res.data.dict() == self.answer_list["1"]
         
         self.dbMock.remove(ANSWERS_KEY)
         
@@ -132,7 +132,6 @@ class TestAnswerProvider():
 
         assert res1.code == 200
         assert len(res1.data) == 1
-        assert res1.data[0] == self.answer_list[1]
 
         self.dbMock.remove(ANSWERS_KEY)
 

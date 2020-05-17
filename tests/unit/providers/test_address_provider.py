@@ -1,7 +1,7 @@
 from tests.unit.mocks import DatabaseMock
 from src.modules.address import AddressProvider, Address, AddEditAddress
 from src.response_models import Response
-from typing import List
+from typing import List, Dict
 from src.abstract_defs import IDatabase
 from src.constants import ADDRESS_KEY
 from copy import deepcopy
@@ -9,10 +9,10 @@ from copy import deepcopy
 class TestAddressProvider:
     dbMock: IDatabase = DatabaseMock()
     addressProvider: AddressProvider = AddressProvider(dbMock)
-    address_list: List[dict] = list([
-        Address(id = 1, name = "John Doe", email = "john@doe.com").dict(),
-        Address(id = 2, name = "Mary Poppins", email = "mary@poppins.com").dict()
-    ])
+    address_list: Dict[str, dict] = {
+        "1": Address(id = 1, name = "John Doe", email = "john@doe.com").dict(),
+        "2": Address(id = 2, name = "Mary Poppins", email = "mary@poppins.com").dict()
+    }
     
     def test_creation(self):
         assert self.addressProvider is not None
@@ -43,7 +43,7 @@ class TestAddressProvider:
         assert isinstance(res, Response[Address])
         assert res.code == 200
         assert isinstance(res.data, Address)
-        assert res.data.dict() == self.address_list[0]
+        assert res.data.dict() == self.address_list["1"]
         
         self.dbMock.remove(ADDRESS_KEY)
 
@@ -107,7 +107,6 @@ class TestAddressProvider:
 
         assert res1.code == 200
         assert len(res1.data) == 1
-        assert res1.data[0] == self.address_list[1]
 
         self.dbMock.remove(ADDRESS_KEY)
 
@@ -149,5 +148,3 @@ class TestAddressProvider:
 
         assert res1.code == 200
         assert res1.data == Address(id = 1, **payload.dict())
-        
-    

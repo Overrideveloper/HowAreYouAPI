@@ -7,5 +7,5 @@ class User(BaseModel):
     
 class TokenPayload(BaseModel):
     randomizer: int
-    user: str
+    user_id: int
     expires: float

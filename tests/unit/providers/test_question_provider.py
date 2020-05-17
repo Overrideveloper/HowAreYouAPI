@@ -1,7 +1,7 @@
 from tests.unit.mocks import DatabaseMock
 from src.modules.question import QuestionProvider, Question, AddEditQuestion
 from src.response_models import Response
-from typing import List
+from typing import List, Dict
 from src.abstract_defs import IDatabase
 from src.constants import QUESTIONS_KEY
 from copy import deepcopy
@@ -9,11 +9,11 @@ from copy import deepcopy
 class TestQuestionProvider:
     dbMock: IDatabase = DatabaseMock()
     questionProvider: QuestionProvider = QuestionProvider(dbMock)
-    question_list: List[dict] = list([
-        Question(id = 1, question = "Hello?", defaultAnswer = "Hi").dict(),
-        Question(id = 2, question = "How are you?", defaultAnswer = "Fine").dict(),
-        Question(id = 3, question = "How do you do?", defaultAnswer = "Well").dict()
-    ])
+    question_list: Dict[str, dict] = {
+        "1": Question(id = 1, question = "Hello?", defaultAnswer = "Hi").dict(),
+        "2": Question(id = 2, question = "How are you?", defaultAnswer = "Fine").dict(),
+        "3": Question(id = 3, question = "How do you do?", defaultAnswer = "Well").dict()
+    }
     
     def test_creation(self):
         assert self.questionProvider is not None
@@ -44,7 +44,7 @@ class TestQuestionProvider:
         assert isinstance(res, Response[Question])
         assert res.code == 200
         assert isinstance(res.data, Question)
-        assert res.data.dict() == self.question_list[0]
+        assert res.data.dict() == self.question_list["1"]
         
         self.dbMock.remove(QUESTIONS_KEY)
         
@@ -95,7 +95,6 @@ class TestQuestionProvider:
 
         assert res1.code == 200
         assert len(res1.data) == 2
-        assert res1.data[0] == self.question_list[1]
 
         self.dbMock.remove(QUESTIONS_KEY)
 
@@ -126,4 +125,3 @@ class TestQuestionProvider:
 
         assert res1.code == 200
         assert res1.data == Question(id = 1, **payload.dict())
-
