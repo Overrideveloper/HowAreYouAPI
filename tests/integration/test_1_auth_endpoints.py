@@ -47,20 +47,17 @@ class Test1_AuthEndpoints:
         assert res.json()["data"]["id"]
         assert res.json()["data"]["email"]
         assert res.json()["data"]["token"]
-        
-        os.environ["TEST_USER_ID"] = str(res.json()["data"]["id"])
-        os.environ["TEST_TOKEN"] = res.json()["data"]["token"]
     
-    def test_change_password_unauthorized(self):
-        user_id = int(os.environ.get("TEST_USER_ID"))
+    def test_change_password_unauthorized(self, user_data):
+        user_id = user_data[1]
         res = self.client.put(f"{URL_FRAGMENT}/change-password/{user_id}", json={ "old_password": "johndoe", "new_password": "johndeux" })
         
         assert res.status_code == 403
         assert res.json() == Response(data = None, code = 403, message = "Not authenticated").dict()
 
-    def test_change_password_user_not_found(self):
-        user_id = int(os.environ.get("TEST_USER_ID"))
-        token = os.environ.get("TEST_TOKEN")
+    def test_change_password_user_not_found(self, user_data):
+        user_id = user_data[1]
+        token = user_data[0]
 
         res = self.client.put(f"{URL_FRAGMENT}/change-password/{user_id}", headers={"Authorization": f"Bearer {token}"},
                               json={ "old_password": "johndeux", "new_password": "johndoe" })
@@ -68,9 +65,9 @@ class Test1_AuthEndpoints:
         assert res.status_code == 404
         assert res.json() == Response(data = None, code = 404, message = "User not found").dict()    
     
-    def test_change_password_successful(self):
-        user_id = int(os.environ.get("TEST_USER_ID"))
-        token = os.environ.get("TEST_TOKEN")
+    def test_change_password_successful(self, user_data):
+        user_id = user_data[1]
+        token = user_data[0]
 
         res = self.client.put(f"{URL_FRAGMENT}/change-password/{user_id}", headers={"Authorization": f"Bearer {token}"},
                               json={ "old_password": "johndoe", "new_password": "johndeux" })

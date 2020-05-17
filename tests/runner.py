@@ -17,12 +17,10 @@ def teardown():
     db.remove(EMAIL_LOG_KEY)
     db.remove(QUESTIONS_KEY)
     db.remove(USERS_KEY)
-    
-    os.environ.clear()
 
 if __name__ == "__main__":
     setup()
 
-    pytest.main(['tests'])
+    pytest.main(["tests", "--cache-clear"])
     
     teardown()
