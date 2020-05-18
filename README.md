@@ -233,8 +233,8 @@ These documentations are powered by OpenAPI, Swagger and ReDoc.
 # Testing
 The API has unit and integration tests.
 
-The unit tests can be found in the tests/unit directory.
-The integration tests can be found in the tests/integration directory.
+The unit tests can be found in the `tests/unit` directory.
+The integration tests can be found in the `tests/integration` directory.
 
 To run the tests:
 1. Start the redis service (for integration tests).
