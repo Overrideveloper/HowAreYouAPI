@@ -8,12 +8,14 @@ services:
         volumes:
             - how-are-you-redis-volume:/bin/data
 
-    how-are-you:
+    api:
         build: .
         command: python main.py
         image: how-are-you-img
         ports:
             - "8000:8000"
+        volumes:
+            - how-are-you-api-volume:/bin/data
         env_file:
             - "./.local.env"
         depends_on:
@@ -21,3 +23,4 @@ services:
 
 volumes:
     how-are-you-redis-volume:
+    how-are-you-api-volume:
